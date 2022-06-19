@@ -1,7 +1,32 @@
 name: Defarmers2
 version: '${project.version}'
 main: teamunc.defarmers2.Defarmers2
-api-version: 1.18
+api-version: 1.19
 prefix: UNC
 authors: [ TeamUNC ]
 description: Defarmers Map
+
+commands:
+    defarmers2:
+        aliases: [ df2 ]
+        usage: /defarmers2
+        description: Defarmers2
+        permission: defarmers2.user
+
+    team:
+        aliases: [ t ]
+        usage: /team
+        description: Defarmers2 team
+        permission: defarmers2.admin
+
+
+
+permissions:
+    user:
+        name: defarmers2.user
+        description: Allows the user to use the Defarmers2 command
+        default: true
+    admin:
+        name: defarmers2.admin
+        description: Allows the admin to use the Defarmers2 command
+        default: false
