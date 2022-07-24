@@ -21,5 +21,8 @@ public class TickPhase3 extends AbstractTickLoop {
     public void actionsOnEnd() {
         // TODO
         System.out.println("TickPhase3 ActionsOnEnd");
+
+        // re setuping players
+        this.plugin.getGameManager().setupPlayers();
     }
 }

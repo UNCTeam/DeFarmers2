@@ -1,5 +1,6 @@
 package teamunc.defarmers2.tickloops;
 
+import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.serializables.GameStates;
 
 /**
@@ -13,12 +14,18 @@ public class TickPhase1 extends AbstractTickLoop {
 
     public void actionsEachSecond() {
         // TODO
-        System.out.println("TickPhase1 ActionsEachSecond");
     }
 
     @Override
     public void actionsOnEnd() {
-        // TODO
-        System.out.println("TickPhase1 ActionsOnEnd");
+
+        // calculate money of each teams from players inventories
+        this.plugin.getGameManager().getTeamManager().calculateMoneyOfTeams();
+
+        // re setuping players
+        this.plugin.getGameManager().setupPlayers();
+
+        // giving players buy menu item
+        this.plugin.getGameManager().getTeamManager().giveBuyMenuItem();
     }
 }

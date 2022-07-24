@@ -36,7 +36,7 @@ public class TeamCommands extends AbstractCommandExecutor{
                 case 1: // subcommand list
                 if (args[0].equalsIgnoreCase("list")) {
                     StringBuilder teamList = new StringBuilder();
-                    for (Team team : plugin.getGameManager().getTeamManager().getTeamList()) {
+                    for (Team team : plugin.getGameManager().getTeamManager().getTeamStates().getAllTeams()) {
                         teamList.append(team.getName()).append(", ");
                     }
                     plugin.sendMessage(sender,"Teams: " + teamList);

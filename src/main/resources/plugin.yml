@@ -6,6 +6,8 @@ prefix: UNC
 authors: [ TeamUNC ]
 description: Defarmers Map
 
+depend: [ FastAsyncWorldEdit]
+
 commands:
     defarmers2:
         aliases: [ df2 ]

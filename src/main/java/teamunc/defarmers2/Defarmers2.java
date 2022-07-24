@@ -1,14 +1,19 @@
 package teamunc.defarmers2;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.conversations.Conversable;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import teamunc.defarmers2.commands.GameCommands;
 import teamunc.defarmers2.commands.TeamCommands;
-import teamunc.defarmers2.managers.FileManager;
+import teamunc.defarmers2.customsItems.ui_menu_Items.ShopInventory;
+import teamunc.defarmers2.eventsListeners.ItemsEvents;
+import teamunc.defarmers2.eventsListeners.PlayersEvents;
 import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.managers.Manager;
+import teamunc.defarmers2.serializables.GameOptions;
 
 public final class Defarmers2 extends JavaPlugin {
 
@@ -25,12 +30,23 @@ public final class Defarmers2 extends JavaPlugin {
         // SINGLETON INIT
         instance = this;
 
-        // register commands
-        registerCommands();
+        // init config
+        GameOptions.getInstance().initConfig();
 
         // enable all managers
         Manager.enableAll();
 
+        // register commands
+        registerCommands();
+
+        // register listeners
+        registerListeners();
+    }
+
+    private void registerListeners() {
+        this.getServer().getPluginManager().registerEvents(new PlayersEvents(this), this);
+        this.getServer().getPluginManager().registerEvents(new ItemsEvents(this), this);
+        this.getServer().getPluginManager().registerEvents(new ShopInventory(), this);
     }
 
     @Override

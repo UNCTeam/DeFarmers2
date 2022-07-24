@@ -24,12 +24,12 @@ public abstract class AbstractTickLoop {
 
     public void onTick() {
 
-        if (gameStates.getTimeInSecondPastInThisPhase() >= this.gameOptions.getTimeForPhase(phase)) {
+        if (gameStates.getTimeLeftInThisPhase() <= 0) {
             this.onEnd();
         }
 
         // timer increase
-        gameStates.setTimeInSecondPastInThisPhase(gameStates.getTimeInSecondPastInThisPhase() + 1);
+        gameStates.setTimeLeftInThisPhase(gameStates.getTimeLeftInThisPhase() - 1);
 
         // actions
         actionsEachSecond();
@@ -56,7 +56,7 @@ public abstract class AbstractTickLoop {
 
     public void switchingPhase(GameStates.GameState state) {
         gameStates.setState(state);
-        gameStates.setTimeInSecondPastInThisPhase(0);
+        gameStates.setTimeLeftInThisPhase(gameOptions.getTimeForPhase(state));
         this.actionsOnEnd();
     }
 }

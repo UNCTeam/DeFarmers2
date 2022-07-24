@@ -13,6 +13,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class FileManager extends Manager {
@@ -51,8 +52,13 @@ public class FileManager extends Manager {
 
     }
 
+    @Override
+    public int getImportance() {
+        return -10;
+    }
+
     public File[] getAllShematicFiles() {
-        return pluginDataFile.listFiles((dir, name) -> name.endsWith(".schematic"));
+        return pluginDataFile.listFiles((dir, name) -> name.endsWith(".schem"));
     }
 
     public boolean fileExists(String fileName) {

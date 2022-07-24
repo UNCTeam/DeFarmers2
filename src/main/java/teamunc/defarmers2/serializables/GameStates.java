@@ -1,6 +1,5 @@
 package teamunc.defarmers2.serializables;
 
-import teamunc.defarmers2.utils.worldEdit.ApiWorldEdit;
 import teamunc.defarmers2.utils.worldEdit.InGameItemsList;
 
 import java.io.Serializable;
@@ -29,10 +28,11 @@ public class GameStates implements Serializable {
 	}
 	private GameState state;
 	private InGameItemsList itemsList;
-	private int TimeInSecondPastInThisPhase;
+	private int timeLeftInThisPhase;
 	public GameStates() {
 		state = GameState.WAITING_FOR_PLAYERS;
-		TimeInSecondPastInThisPhase = -1;
+		itemsList = null;
+		timeLeftInThisPhase = -1;
 	}
 
 	public GameState getState() {
@@ -45,15 +45,16 @@ public class GameStates implements Serializable {
 
 	public void reset() {
 		state = GameState.WAITING_FOR_PLAYERS;
-		TimeInSecondPastInThisPhase = -1;
+		itemsList = null;
+		timeLeftInThisPhase = -1;
 	}
 
-	public int getTimeInSecondPastInThisPhase() {
-		return TimeInSecondPastInThisPhase;
+	public int getTimeLeftInThisPhase() {
+		return timeLeftInThisPhase;
 	}
 
-	public void setTimeInSecondPastInThisPhase(int timeInSecondPastInThisPhase) {
-		TimeInSecondPastInThisPhase = timeInSecondPastInThisPhase;
+	public void setTimeLeftInThisPhase(int timeLeftInThisPhase) {
+		this.timeLeftInThisPhase = timeLeftInThisPhase;
 	}
 
 	public void setItemsList(InGameItemsList itemsList) {

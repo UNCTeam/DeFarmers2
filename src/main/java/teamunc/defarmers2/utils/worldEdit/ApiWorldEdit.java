@@ -1,24 +1,18 @@
 package teamunc.defarmers2.utils.worldEdit;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.session.ClipboardHolder;
+import com.sk89q.worldedit.world.World;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.FileManager;
 import teamunc.defarmers2.managers.GameManager;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -45,16 +39,37 @@ public class ApiWorldEdit {
         }
     }
 
-    public static void setupPhase1Area(Location[] locations) {
-        setupArea(locations, "phase1");
+    public static void managePhase1Area(Location[] locations, boolean setup) {
+        // now array of Location
+        Location[] copy = new Location[locations.length];
+
+        for (int i = 0; i < locations.length; i++) {
+            copy[i] = locations[i].clone().add(25, 3, 25);
+        }
+
+        if (setup) {
+            setupArea(copy, "phase1");
+        } else {
+            resetArea(locations);
+        }
     }
 
-    public static void setupPhase2Area(Location[] locations) {
-        setupArea(locations, "phase2");
+
+
+    public static void managePhase2Area(Location[] locations, boolean setup) {
+        if (setup) {
+            setupArea(locations, "phase2");
+        } else {
+            resetArea(locations);
+        }
     }
 
-    public static void setupPhase3Area(Location[] locations) {
-        setupArea(locations, "phase3");
+    public static void managePhase3Area(Location[] locations, boolean setup) {
+        if (setup) {
+            setupArea(locations, "phase3");
+        } else {
+            resetArea(locations);
+        }
     }
 
     public static void setupArea(Location[] locations, String fileName) {
@@ -79,27 +94,29 @@ public class ApiWorldEdit {
         for (Location location : locations) {
 
             ClipboardFormat format = ClipboardFormats.findByFile(file);
+            BlockVector3 pos = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            World world = new BukkitWorld(location.getWorld());
 
             try {
-                assert format != null;
-                try (ClipboardReader reader = format.getReader(Files.newInputStream(file.toPath()))) {
-                    Clipboard clipboard = reader.read();
-
-                    int x = location.getBlockX();
-                    int y = location.getBlockY();
-                    int z = location.getBlockZ();
-
-                    try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder().limitUnlimited().build()) {
-                        Operation operation = new ClipboardHolder(clipboard)
-                                .createPaste(editSession)
-                                .to(BlockVector3.at(x, y, z))
-                                .ignoreAirBlocks(false)
-                                .build();
-                        Operations.complete(operation);
-                    }
-                }
+                format.load(file).paste(world, pos, false, true, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static void resetArea(Location[] locations) {
+
+        for (Location location : locations) {
+            // create a region of 50 50 50 blocks
+            for (int i = -26; i <= 26; i++) {
+                for (int j = -26; j <= 26; j++) {
+                    for (int k = -51; k <= 2; k++) {
+                        Block blockCloned = location.clone().add(i, k, j).getBlock();
+                        if (blockCloned.getType() != Material.AIR)
+                            blockCloned.setType(Material.AIR);
+                    }
+                }
             }
         }
     }
@@ -107,9 +124,13 @@ public class ApiWorldEdit {
     public static void setupItemsList(String fileName) {
         Defarmers2 plugin = Defarmers2.getInstance();
         GameManager gameManager = plugin.getGameManager();
-        InGameItemsList itemsList = gameManager.getFileManager().loadJson(fileName, InGameItemsList.class);
+        InGameItemsList itemsList = null;
+        itemsList = gameManager.getFileManager().loadJson(fileName, InGameItemsList.class);
 
+        if (itemsList == null) {
+            plugin.getLogger().log(Level.SEVERE, "Error while loading items list, using default instead");
+            itemsList = gameManager.getFileManager().loadJson("default_itemList", InGameItemsList.class);
+        }
         gameManager.getGameStates().setItemsList(itemsList);
-
     }
 }

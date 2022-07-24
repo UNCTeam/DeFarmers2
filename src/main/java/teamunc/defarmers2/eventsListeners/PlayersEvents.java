@@ -2,8 +2,10 @@ package teamunc.defarmers2.eventsListeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.serializables.GameStates;
@@ -15,7 +17,7 @@ public class PlayersEvents extends AbstractListener {
     }
 
     @EventHandler
-    public boolean onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         GameManager gameManager = this.plugin.getGameManager();
 
@@ -23,7 +25,6 @@ public class PlayersEvents extends AbstractListener {
         && gameManager.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
             gameManager.resetInGameScoreboard(player);
         }
-        return true;
     }
 
     @EventHandler

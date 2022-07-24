@@ -35,6 +35,11 @@ public class TickActionsManager extends Manager{
 
     }
 
+    @Override
+    public int getImportance() {
+        return 4;
+    }
+
     public void onTick() {
         GameManager gameManager = plugin.getGameManager();
 
@@ -51,36 +56,21 @@ public class TickActionsManager extends Manager{
     }
 
     public int getHourLeft() {
-        int secMax = plugin.getGameManager().getGameOptions().getTimeForPhase(plugin.getGameManager().getGameStates().getState());
-        int secPasse = plugin.getGameManager().getGameStates().getTimeInSecondPastInThisPhase();
+        int secPasse = plugin.getGameManager().getGameStates().getTimeLeftInThisPhase();
 
-        int totalSec = secMax - secPasse;
-
-        int heureRestante = (totalSec - (totalSec % 3600)) / 3600;
-
-        return heureRestante;
+        return (secPasse - (secPasse % 3600)) / 3600;
     }
 
     public int getMinuteLeft() {
-        int secMax = plugin.getGameManager().getGameOptions().getTimeForPhase(plugin.getGameManager().getGameStates().getState());
-        int secPasse = plugin.getGameManager().getGameStates().getTimeInSecondPastInThisPhase();
+        int secPasse = plugin.getGameManager().getGameStates().getTimeLeftInThisPhase();
 
-        int totalSec = secMax - secPasse;
-
-        int minuteRestante = (totalSec % 3600 - (totalSec % 60) )/ 60;
-
-        return minuteRestante;
+        return (secPasse % 3600 - (secPasse % 60) )/ 60;
     }
 
     public int getSecondLeft() {
-        int secMax = plugin.getGameManager().getGameOptions().getTimeForPhase(plugin.getGameManager().getGameStates().getState());
-        int secPasse = plugin.getGameManager().getGameStates().getTimeInSecondPastInThisPhase();
+        int secPasse = plugin.getGameManager().getGameStates().getTimeLeftInThisPhase();
 
-        int totalSecondes = secMax - secPasse;
-
-        int secondRestante = totalSecondes % 60;
-
-        return secondRestante;
+        return secPasse % 60;
     }
 
 }

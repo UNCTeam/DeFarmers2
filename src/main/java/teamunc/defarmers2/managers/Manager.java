@@ -1,9 +1,10 @@
 package teamunc.defarmers2.managers;
 
-import org.bukkit.Bukkit;
 import teamunc.defarmers2.Defarmers2;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.logging.Level;
 
 public abstract class Manager {
 
@@ -26,9 +27,14 @@ public abstract class Manager {
         GameManager.enable();
         TeamManager.enable();
         TickActionsManager.enable();
+        CustomItemsManager.enable();
 
-        // init all
+        // sort all managers by priority (lowest first)
+        managers.sort(Comparator.comparingInt(Manager::getImportance));
+
         for (Manager manager : managers) {
+            Defarmers2.getInstance().getLogger().log(Level.INFO,"Enabling " + manager.getClass().getSimpleName() + " Importance : " + manager.getImportance());
+
             manager.onInit();
         }
     }
@@ -36,4 +42,6 @@ public abstract class Manager {
     public abstract void onInit();
 
     public abstract void onDisable();
+
+    public abstract int getImportance();
 }

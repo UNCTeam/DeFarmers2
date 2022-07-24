@@ -1,9 +1,6 @@
 package teamunc.defarmers2.managers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -21,11 +18,11 @@ public class GameManager extends Manager {
     // States
     private GameStates gameStates;
 
-    // Options
-    private GameOptions gameOptions;
-
     // InGameInfoScoreboards
     private ArrayList<InGameInfoScoreboard> inGameInfoScoreboards;
+
+    // game options
+    private GameOptions gameOptions;
 
     private BukkitScheduler scheduler = plugin.getServer().getScheduler();
 
@@ -48,6 +45,9 @@ public class GameManager extends Manager {
     public void onInit() {
         instance.inGameInfoScoreboards = new ArrayList<>();
 
+        // config
+        instance.gameOptions = GameOptions.getInstance();
+
         // load save or create if not found
         if (this.getFileManager().fileExists("gameStates")) {
             this.gameStates = this.getFileManager().loadJson("gameStates", GameStates.class);
@@ -56,34 +56,41 @@ public class GameManager extends Manager {
             this.getFileManager().saveJson("gameStates",this.gameStates);
         }
 
-        if (this.getFileManager().fileExists("gameOptions")) {
-            this.gameOptions = this.getFileManager().loadJson("gameOptions", GameOptions.class);
-        } else {
-            this.gameOptions = new GameOptions(
-                    30,
-                    10,
-                    30,
-                    new Location(Bukkit.getWorlds().get(0), 0, 100, 0),
-                    new Location(Bukkit.getWorlds().get(0),100, 100, 100),
-                    new Location(Bukkit.getWorlds().get(0), 200, 100, 200),
-                    new Location(Bukkit.getWorlds().get(0), 500, 100, 500)
-            );
-
-            this.getFileManager().saveJson("gameOptions",this.gameOptions);
-        }
-
         if (this.getFileManager().fileExists("default_itemList")) {
             this.gameStates.setItemsList(this.getFileManager().loadJson("default_itemList", InGameItemsList.class));
         } else {
             this.gameStates.setItemsList(new InGameItemsList(new HashMap<>(Map.of("STONE",1))));
             this.getFileManager().saveJson("default_itemList",this.gameStates.getItemsList());
         }
+
+        // reload tick loop if game is running
+        if (this.gameStates.getState() != GameStates.GameState.WAITING_FOR_PLAYERS) {
+            this.eachSecondsTimerID = scheduler.scheduleSyncRepeatingTask(
+                    this.plugin,
+                    () -> getTickActionsManager().onTick(),
+                    0L,
+                    20L
+            );
+
+            // reload scoreboard
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if(this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
+                    this.resetInGameScoreboard(player);
+                }
+            }
+        }
+
     }
 
     @Override
     public void onDisable() {
         // save
         this.getFileManager().saveJson("gameStates",this.gameStates);
+    }
+
+    @Override
+    public int getImportance() {
+        return 0;
     }
 
     public GameStates getGameStates() {
@@ -93,19 +100,19 @@ public class GameManager extends Manager {
 
     public void startGame() {
         gameStates.setState(GameStates.GameState.PHASE1);
-        gameStates.setTimeInSecondPastInThisPhase(0);
+        gameStates.setTimeLeftInThisPhase(gameOptions.getTimeForPhase(GameStates.GameState.PHASE1));
 
         // setting up team location
-        this.getTeamManager().setupTeamSpawn();
+        this.getTeamManager().setupTeams();
 
         // setting up phase 1 area
-        ApiWorldEdit.setupPhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1));
+        ApiWorldEdit.managePhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1), true);
 
         // setting up phase 2 area
-        ApiWorldEdit.setupPhase2Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE2));
+        ApiWorldEdit.managePhase2Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE2), true);
 
         // setting up phase 3 area
-        ApiWorldEdit.setupPhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()});
+        ApiWorldEdit.managePhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()}, true);
 
         setupPlayers();
 
@@ -119,6 +126,14 @@ public class GameManager extends Manager {
             }
         }
 
+        // inform players of items list and price
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(ChatColor.GOLD + "--- Items list: ---");
+            for (String item : this.gameStates.getItemsList().getItemsListWithPrice().keySet()) {
+                player.sendMessage("§a" + item + ": "+ ChatColor.GOLD + this.gameStates.getItemsList().getItemsListWithPrice().get(item));
+            }
+        }
+
         // start tick loop
         this.eachSecondsTimerID = scheduler.scheduleSyncRepeatingTask(this.plugin, () -> getTickActionsManager().onTick(),  0L, 20L);
     }
@@ -128,25 +143,39 @@ public class GameManager extends Manager {
     }
 
     public void stopGame() {
-        // saving stats
-        this.getFileManager().saveJson("GameStats_Save_" + UUID.randomUUID(),this.getTeamManager().getTeamStates());
+        try {
+            // saving stats
+            this.getFileManager().saveJson("TeamStates_Save_" + UUID.randomUUID(), this.getTeamManager().getTeamStates());
 
-        // reseting gameStates
-        gameStates.reset();
+            // reseting gameStates
+            gameStates.reset();
 
+            // reseting inGamePlatform
+            // phase 1 area
+            ApiWorldEdit.managePhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1), false);
+            // phase 2 area
+            ApiWorldEdit.managePhase2Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE2), false);
+            // phase 3 area
+            ApiWorldEdit.managePhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()}, false);
 
-        // deleting scoreboards
-        DeleteAllScoreboard();
+            // deleting scoreboards
+            DeleteAllScoreboard();
 
-        // reseting TeamManager
-        this.getTeamManager().reset();
+            // re setuping players
+            this.setupPlayers();
 
-        // teleport players to lobby
-        teleportPlayers(GameStates.GameState.WAITING_FOR_PLAYERS);
+            // teleport players to lobby
+            this.teleportPlayers(GameStates.GameState.WAITING_FOR_PLAYERS);
 
-        // stop tick loop
-        stopTickLoop();
+            // reseting TeamManager
+            this.getTeamManager().reset();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // stop tick loop
+            this.stopTickLoop();
+        }
     }
 
     /**
@@ -161,6 +190,7 @@ public class GameManager extends Manager {
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setExp(0);
                 player.setLevel(0);
+                player.getInventory().clear();
             }
         }
     }
@@ -175,10 +205,6 @@ public class GameManager extends Manager {
 
     public TeamManager getTeamManager() {
         return TeamManager.getInstance();
-    }
-
-    public void generateItemGamePrice() {
-
     }
 
     public FileManager getFileManager() {
@@ -258,5 +284,9 @@ public class GameManager extends Manager {
                 inGameInfoScoreboards.remove(inGameInfoScoreboard);
             }
         }
+    }
+
+    public CustomItemsManager getCustomItemsManager() {
+        return CustomItemsManager.getInstance();
     }
 }

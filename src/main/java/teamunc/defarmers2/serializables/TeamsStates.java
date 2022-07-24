@@ -3,6 +3,9 @@ package teamunc.defarmers2.serializables;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scoreboard.Team;
+import teamunc.defarmers2.customsItems.CustomItem;
+import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
+import teamunc.defarmers2.managers.CustomItemsManager;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,6 +14,7 @@ import java.util.Set;
 public class TeamsStates implements Serializable {
     private HashMap<String,Integer> teamsScores = new HashMap<>();
     private HashMap<String,Integer> teamsMoneys = new HashMap<>();
+    private HashMap<String,HashMap<String,Integer>> teamsArtefacts = new HashMap<>();
     private HashMap<String,HashMap<GameStates.GameState, Location>> teamsSpawnPerPhase = new HashMap<>();
 
     //set team scores
@@ -26,6 +30,11 @@ public class TeamsStates implements Serializable {
     //get team score
     public int getTeamScore(String teamID){
         return teamsScores.get(teamID);
+    }
+
+    // team init ?
+    public boolean isTeamInit(String teamID){
+        return teamsSpawnPerPhase.containsKey(teamID);
     }
 
     //get team money
@@ -71,13 +80,6 @@ public class TeamsStates implements Serializable {
         teamsMoneys.clear();
     }
 
-    //init team
-    public void initTeam(String teamID, int score, int money, HashMap<GameStates.GameState, Location> SpawnPerPhase){
-        teamsScores.put(teamID, score);
-        teamsMoneys.put(teamID, money);
-        teamsSpawnPerPhase.put(teamID, SpawnPerPhase);
-    }
-
     //reset team
     public void resetTeam(String teamID){
         teamsScores.remove(teamID);
@@ -95,6 +97,16 @@ public class TeamsStates implements Serializable {
         return teamsSpawnPerPhase.get(teamID).get(gameState);
     }
 
+    public Location[] getAllSpawnLocationsForAPhase(GameStates.GameState gameState){
+        Location[] locations = new Location[teamsSpawnPerPhase.size()];
+        int i = 0;
+        for(String teamID : teamsSpawnPerPhase.keySet()){
+            locations[i] = teamsSpawnPerPhase.get(teamID).get(gameState);
+            i++;
+        }
+        return locations;
+    }
+
     public int getTeamIndex(String name) {
         int index = 0;
         for (Team team : getAllTeams()) {
@@ -104,5 +116,32 @@ public class TeamsStates implements Serializable {
             index++;
         }
         return -1;
+    }
+
+    public void addArtefactInTeam(String name, CustomUIItem customUIItem) {
+        if(!teamsArtefacts.containsKey(name)){
+            teamsArtefacts.put(name, new HashMap<>());
+        }
+        if (!teamsArtefacts.get(name).containsKey(customUIItem.getCustomType())) {
+            teamsArtefacts.get(name).put(customUIItem.getCustomType(), 0);
+        }
+
+        teamsArtefacts.get(name).put(customUIItem.getCustomType(), teamsArtefacts.get(name).get(customUIItem.getCustomType()) + 1);
+    }
+
+    public HashMap<String, Integer> getTeamsArtefacts(Team team) {
+        return teamsArtefacts.get(team.getName());
+    }
+
+    public CustomItem[] getArtefactsInTeam(String name) {
+        CustomItem[] customItems = new CustomItem[teamsArtefacts.get(name).size()];
+        int i = 0;
+        for (String customType : teamsArtefacts.get(name).keySet()) {
+            CustomItem customItem = CustomItemsManager.getInstance().getCustomItem(customType);
+            customItem.setAmount(teamsArtefacts.get(name).get(customType));
+            customItems[i] = customItem;
+            i++;
+        }
+        return customItems;
     }
 }

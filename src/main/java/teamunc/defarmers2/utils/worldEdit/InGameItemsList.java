@@ -5,7 +5,13 @@ import java.util.HashMap;
 
 public class InGameItemsList implements Serializable {
 
-    public HashMap<String,Integer> itemsListWithPrice;
+    private HashMap<String,Integer> itemsListWithPrice;
+
+    //getter
+    public HashMap<String, Integer> getItemsListWithPrice() {
+        return itemsListWithPrice;
+    }
+
     public InGameItemsList(HashMap<String,Integer> itemsListWithPrice) {
         this.itemsListWithPrice = itemsListWithPrice;
     }

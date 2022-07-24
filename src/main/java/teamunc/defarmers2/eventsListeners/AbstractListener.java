@@ -10,6 +10,5 @@ public abstract class AbstractListener implements Listener {
     AbstractListener(Defarmers2 plugin) {
         super();
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 }
