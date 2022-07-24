@@ -8,6 +8,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import teamunc.defarmers2.Defarmers2;
 
+import java.util.Objects;
+
 public abstract class CustomItem extends ItemStack {
 
     protected NamespacedKey customItemKey;
@@ -23,7 +25,9 @@ public abstract class CustomItem extends ItemStack {
         this.setItemMeta(meta);
 
     }
-
+    public String getCustomType() {
+        return Objects.requireNonNull(this.getItemMeta()).getPersistentDataContainer().get(this.customItemKey,PersistentDataType.STRING);
+    }
     public abstract void onClick(CustomItemParams params);
 
 }

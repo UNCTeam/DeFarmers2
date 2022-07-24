@@ -13,14 +13,12 @@ public class TickPhase2 extends AbstractTickLoop {
 
     @Override
     public void actionsEachSecond() {
-        // TODO
-        System.out.println("TickPhase2 ActionsEachSecond");
     }
 
     @Override
     public void actionsOnEnd() {
         // re setuping players
-        this.plugin.getGameManager().setupPlayers();
+        this.plugin.getGameManager().setupPlayers(true);
 
         // give Artefact buyed to each teams
         this.plugin.getGameManager().getTeamManager().giveArtefactToTeams();

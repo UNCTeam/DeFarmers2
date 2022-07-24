@@ -12,6 +12,7 @@ import teamunc.defarmers2.customsItems.ShopItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.serializables.GameStates;
 import teamunc.defarmers2.serializables.TeamsStates;
+import teamunc.defarmers2.utils.Utils;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
 import java.util.*;
@@ -323,14 +324,23 @@ public class TeamManager extends Manager{
             if (team != null) {
                 // distribute artefacts to players in the team randomly
                 ArrayList<CustomItem> artefacts = new ArrayList<>(List.of(this.getArtefactInTeam(team.getName())));
-                for (String playerName : team.getEntries()) {
-                    Player player = Bukkit.getPlayer(playerName);
-                    if (player != null) {
-                        int index = new Random().nextInt(artefacts.size());
-                        player.getInventory().addItem(artefacts.remove(index));
-                    }
+                for (CustomItem artefact : artefacts) {
+                    int random = new Random().nextInt(team.getEntries().size());
+                    Player player = getPlayersInTeamOnline(team.getName()).get(random);
+                    player.getInventory().addItem(artefact);
                 }
             }
         }
+    }
+
+    public ArrayList<Player> getPlayersInTeamOnline(String name) {
+        ArrayList<Player> players = new ArrayList<>();
+        for (String playerName : this.getTeam(name).getEntries()) {
+            Player player = Bukkit.getPlayer(playerName);
+            if (player != null) {
+                players.add(player);
+            }
+        }
+        return players;
     }
 }
