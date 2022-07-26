@@ -1,13 +1,11 @@
 package teamunc.defarmers2.customsItems;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class FrozenItem extends CustomItem {
 
@@ -22,5 +20,9 @@ public class FrozenItem extends CustomItem {
         Inventory inv = Bukkit.createInventory(null, 54, "Buy Menu");
 
         player.openInventory(inv);
+    }
+    @Override
+    public @NotNull List<String> getDescription() {
+        return List.of("§r§7Description", "§r§7juste §cici");
     }
 }

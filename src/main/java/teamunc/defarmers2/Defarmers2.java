@@ -46,7 +46,7 @@ public final class Defarmers2 extends JavaPlugin {
     private void registerListeners() {
         this.getServer().getPluginManager().registerEvents(new PlayersEvents(this), this);
         this.getServer().getPluginManager().registerEvents(new ItemsEvents(this), this);
-        this.getServer().getPluginManager().registerEvents(new ShopInventory(), this);
+        this.getServer().getPluginManager().registerEvents(ShopInventory.getInstance(), this);
     }
 
     @Override

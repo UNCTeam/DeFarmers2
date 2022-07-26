@@ -11,6 +11,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomItemsManager;
+import teamunc.defarmers2.managers.CustomMobsManager;
+import teamunc.defarmers2.mobs.DeFarmersEntityType;
 
 
 public class GameOptions {
@@ -42,6 +44,11 @@ public class GameOptions {
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
             config.addDefault("custom-item." + type + ".price", 100);
             config.addDefault("custom-item." + type + ".enabled", true);
+        }
+
+        for (DeFarmersEntityType type : CustomMobsManager.getAllCustomMobsTypes()) {
+            config.addDefault("custom-mob." + type.toString() + ".price", 10);
+            config.addDefault("custom-mob." + type.toString() + ".enabled", true);
         }
 
         config.options().copyDefaults(true);
@@ -87,5 +94,13 @@ public class GameOptions {
 
     public int getCustomItemPrice(String type) {
         return config.getInt("custom-item." + type + ".price");
+    }
+
+    public boolean isCustomMobEnabled(DeFarmersEntityType type) {
+        return config.getBoolean("custom-mob." + type.toString() + ".enabled");
+    }
+
+    public int getCustomMobPrice(DeFarmersEntityType type) {
+        return config.getInt("custom-mob." + type.toString() + ".price");
     }
 }

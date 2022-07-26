@@ -31,9 +31,6 @@ public class GameCommands extends AbstractCommandExecutor {
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     plugin.sendMessage(sender,"Reloading game...");
                     plugin.getGameManager().reloadGame();
-                } else if (args[0].equalsIgnoreCase("test")) {
-                    plugin.sendMessage(sender,"Testing...");
-                    plugin.getGameManager().test(sender,args);
                 } else {
                     plugin.sendMessage(sender,"Invalid command.");
                 }

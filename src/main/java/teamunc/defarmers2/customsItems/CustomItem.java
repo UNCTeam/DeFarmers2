@@ -6,8 +6,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 import teamunc.defarmers2.Defarmers2;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class CustomItem extends ItemStack {
@@ -30,4 +32,6 @@ public abstract class CustomItem extends ItemStack {
     }
     public abstract void onClick(CustomItemParams params);
 
+    @NotNull
+    public abstract List<String> getDescription();
 }

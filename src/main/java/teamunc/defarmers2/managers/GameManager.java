@@ -244,24 +244,6 @@ public class GameManager extends Manager {
         }
     }
 
-    public void test(CommandSender sender, String[] args) {
-
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            int arg = Integer.parseInt(args[1]);
-
-            // 100 blocks d'espace entre chaque point de spawn
-            // avec 10 blocks de décalage pour chaque team
-            int radius = 22*arg + 15;
-
-            Location[] locations = MathsUtils.getCircle(player.getLocation(), radius, arg);
-
-            ApiWorldEdit.placePlatform(locations, 50);
-
-            ApiWorldEdit.placeBlocks(locations, Material.DIAMOND_BLOCK);
-        }
-    }
-
     public void ActualiseInGameScoreboard() {
         this.inGameInfoScoreboards.forEach(InGameInfoScoreboard::actualise);
     }
@@ -289,5 +271,9 @@ public class GameManager extends Manager {
 
     public CustomItemsManager getCustomItemsManager() {
         return CustomItemsManager.getInstance();
+    }
+
+    public CustomMobsManager getCustomMobsManager() {
+        return CustomMobsManager.getInstance();
     }
 }

@@ -12,10 +12,11 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class TeamsStates implements Serializable {
-    private HashMap<String,Integer> teamsScores = new HashMap<>();
-    private HashMap<String,Integer> teamsMoneys = new HashMap<>();
-    private HashMap<String,HashMap<String,Integer>> teamsArtefacts = new HashMap<>();
-    private HashMap<String,HashMap<GameStates.GameState, Location>> teamsSpawnPerPhase = new HashMap<>();
+    private final HashMap<String,Integer> teamsScores = new HashMap<>();
+    private final HashMap<String,Integer> teamsMoneys = new HashMap<>();
+    private final HashMap<String,HashMap<String,Integer>> teamsArtefacts = new HashMap<>();
+    private final HashMap<String,HashMap<String,Integer>> teamsMobs = new HashMap<>();
+    private final HashMap<String,HashMap<GameStates.GameState, Location>> teamsSpawnPerPhase = new HashMap<>();
 
     //set team scores
     public void setTeamScore(String teamID, int score){
@@ -85,6 +86,8 @@ public class TeamsStates implements Serializable {
         teamsScores.remove(teamID);
         teamsMoneys.remove(teamID);
         teamsSpawnPerPhase.remove(teamID);
+        teamsArtefacts.remove(teamID);
+        teamsMobs.remove(teamID);
     }
 
     //get all teams
@@ -119,14 +122,23 @@ public class TeamsStates implements Serializable {
     }
 
     public void addArtefactInTeam(String name, CustomUIItem customUIItem) {
-        if(!teamsArtefacts.containsKey(name)){
-            teamsArtefacts.put(name, new HashMap<>());
+        addStuffToTeam(name, customUIItem, teamsArtefacts);
+    }
+
+    private void addStuffToTeam(String name, CustomUIItem customUIItem, HashMap<String, HashMap<String, Integer>> teamsList) {
+        if(!teamsList.containsKey(name)){
+            teamsList.put(name, new HashMap<>());
         }
-        if (!teamsArtefacts.get(name).containsKey(customUIItem.getCustomType())) {
-            teamsArtefacts.get(name).put(customUIItem.getCustomType(), 0);
+        if (!teamsList.get(name).containsKey(customUIItem.getCustomType())) {
+            teamsList.get(name).put(customUIItem.getCustomType(), 0);
         }
 
-        teamsArtefacts.get(name).put(customUIItem.getCustomType(), teamsArtefacts.get(name).get(customUIItem.getCustomType()) + 1);
+        teamsList.get(name).put(customUIItem.getCustomType(), teamsList.get(name).get(customUIItem.getCustomType()) + 1);
+    }
+
+    public void addMobInTeam(String name, CustomUIItem customUIItem) {
+        // if team doesn't exist, create it
+        addStuffToTeam(name, customUIItem, teamsMobs);
     }
 
     public HashMap<String, Integer> getTeamsArtefacts(Team team) {
@@ -143,5 +155,17 @@ public class TeamsStates implements Serializable {
             i++;
         }
         return customItems;
+    }
+
+    public HashMap<String, Integer> getTeamsMobs(Team team) {
+        return teamsMobs.get(team.getName());
+    }
+
+    public void initArtefactsList(String name) {
+        teamsArtefacts.put(name, new HashMap<>());
+    }
+
+    public void initMobsList(String name) {
+        teamsMobs.put(name, new HashMap<>());
     }
 }

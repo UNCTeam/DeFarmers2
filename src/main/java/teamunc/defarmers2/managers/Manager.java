@@ -28,13 +28,12 @@ public abstract class Manager {
         TeamManager.enable();
         TickActionsManager.enable();
         CustomItemsManager.enable();
+        CustomMobsManager.enable();
 
         // sort all managers by priority (lowest first)
         managers.sort(Comparator.comparingInt(Manager::getImportance));
 
         for (Manager manager : managers) {
-            Defarmers2.getInstance().getLogger().log(Level.INFO,"Enabling " + manager.getClass().getSimpleName() + " Importance : " + manager.getImportance());
-
             manager.onInit();
         }
     }

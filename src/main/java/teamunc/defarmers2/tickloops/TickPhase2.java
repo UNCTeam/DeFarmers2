@@ -22,5 +22,8 @@ public class TickPhase2 extends AbstractTickLoop {
 
         // give Artefact buyed to each teams
         this.plugin.getGameManager().getTeamManager().giveArtefactToTeams();
+
+        // spawn custom mobs
+        this.plugin.getGameManager().getCustomMobsManager().spawnCustomMobsForEachTeam();
     }
 }

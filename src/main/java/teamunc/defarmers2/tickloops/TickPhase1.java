@@ -1,6 +1,5 @@
 package teamunc.defarmers2.tickloops;
 
-import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.serializables.GameStates;
 
 /**
@@ -25,7 +24,7 @@ public class TickPhase1 extends AbstractTickLoop {
         // re setuping players
         this.plugin.getGameManager().setupPlayers(true);
 
-        // giving players buy menu item
-        this.plugin.getGameManager().getTeamManager().giveBuyMenuItem();
+        // giving players shop item
+        this.plugin.getGameManager().getTeamManager().giveShopItem();
     }
 }

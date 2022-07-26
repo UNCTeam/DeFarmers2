@@ -3,7 +3,6 @@ package teamunc.defarmers2.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.Team;
@@ -12,7 +11,6 @@ import teamunc.defarmers2.customsItems.ShopItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.serializables.GameStates;
 import teamunc.defarmers2.serializables.TeamsStates;
-import teamunc.defarmers2.utils.Utils;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
 import java.util.*;
@@ -266,6 +264,8 @@ public class TeamManager extends Manager{
             if (team != null) {
                 this.getTeamStates().setTeamMoney(team.getName(), this.plugin.getGameManager().getGameOptions().getStartingMoney());
                 this.getTeamStates().setTeamScore(team.getName(), 0);
+                this.getTeamStates().initMobsList(team.getName());
+                this.getTeamStates().initArtefactsList(team.getName());
             }
         }
     }
@@ -298,7 +298,7 @@ public class TeamManager extends Manager{
         }
     }
 
-    public void giveBuyMenuItem() {
+    public void giveShopItem() {
         for (Team team : this.getTeamStates().getAllTeams()) {
             if (team != null) {
                 for (String playerName : team.getEntries()) {
@@ -333,6 +333,10 @@ public class TeamManager extends Manager{
         }
     }
 
+    public HashMap<String, Integer> getTeamsArtefacts(Team team) {
+        return this.teamsStates.getTeamsArtefacts(team);
+    }
+
     public ArrayList<Player> getPlayersInTeamOnline(String name) {
         ArrayList<Player> players = new ArrayList<>();
         for (String playerName : this.getTeam(name).getEntries()) {
@@ -342,5 +346,17 @@ public class TeamManager extends Manager{
             }
         }
         return players;
+    }
+
+    public void addAMobInTeam(String name, CustomUIItem customUIItem) {
+        this.teamsStates.addMobInTeam(name, customUIItem);
+    }
+
+    public Set<Team> getTeams() {
+        return this.teamsStates.getAllTeams();
+    }
+
+    public HashMap<String, Integer> getTeamsMobs(Team team) {
+        return this.teamsStates.getTeamsMobs(team);
     }
 }
