@@ -13,18 +13,33 @@ import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameOptions;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class CustomUIItem extends ItemStack {
 
-    public CustomUIItem(ItemStack item) {
+    public CustomUIItem(ItemStack item, Team team) {
         super(item);
+
+        // setting lore
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§r§fBuy " + meta.getDisplayName());
-
-        meta.setLore(Arrays.asList("", "§r§l§cClick to buy this item","Price : " + getPrice()));
-
+        int nbActuelle = getNbItem(team);
+        meta.setLore(Arrays.asList("", "§r§l§cClick to buy this item","Price : " + getPrice(),"§r§l§cYou have : §r§f§a" + nbActuelle));
         item.setItemMeta(meta);
+        this.setItemMeta(meta);
+    }
+
+    public int getNbItem(Team team) {
+        int res = 0;
+        if (typeOfCustom() == ItemTypeEnum.CUSTOM_ITEM) {
+            HashMap<String, Integer> artefactNumberMap = TeamManager.getInstance().getTeamsArtefacts(team);
+            res = artefactNumberMap.getOrDefault(getCustomType(), 0);
+        } else if (typeOfCustom() == ItemTypeEnum.CUSTOM_MOB) {
+            HashMap<String, Integer> mobNumberMap = TeamManager.getInstance().getSelectedTeamsMobs(team);
+            res = mobNumberMap.getOrDefault(getCustomType(), 0);
+        }
+
+        return res;
     }
 
     public String getCustomType() {
@@ -54,27 +69,7 @@ public class CustomUIItem extends ItemStack {
         }
     }
 
-    public void buy(@NotNull Team team) {
-
-        TeamManager teamManager = Defarmers2.getInstance().getGameManager().getTeamManager();
-        int price = getPrice();
-
-
-        int Money = teamManager.getTeamMoney(team.getName());
-        if (Money < price) {
-            return;
-        }
-
-        teamManager.setTeamMoney(team.getName(), Money - price);
-        if (this.typeOfCustom() == ItemTypeEnum.CUSTOM_ITEM)
-            teamManager.addArtefactInTeam(team.getName(), this);
-        else if (this.typeOfCustom() == ItemTypeEnum.CUSTOM_MOB)
-                teamManager.addAMobInTeam(team.getName(), this);
-    }
-
     public int getPrice() {
-        System.out.println(this.typeOfCustom());
-        System.out.println(this.getCustomType());
         if (this.typeOfCustom() == ItemTypeEnum.CUSTOM_ITEM) {
             return GameOptions.getInstance().getCustomItemPrice(this.getCustomType());
 

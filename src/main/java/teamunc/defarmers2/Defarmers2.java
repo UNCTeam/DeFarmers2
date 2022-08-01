@@ -10,6 +10,7 @@ import teamunc.defarmers2.commands.GameCommands;
 import teamunc.defarmers2.commands.TeamCommands;
 import teamunc.defarmers2.customsItems.ui_menu_Items.ShopInventory;
 import teamunc.defarmers2.eventsListeners.ItemsEvents;
+import teamunc.defarmers2.eventsListeners.MobsEvents;
 import teamunc.defarmers2.eventsListeners.PlayersEvents;
 import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.managers.Manager;
@@ -47,6 +48,7 @@ public final class Defarmers2 extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayersEvents(this), this);
         this.getServer().getPluginManager().registerEvents(new ItemsEvents(this), this);
         this.getServer().getPluginManager().registerEvents(ShopInventory.getInstance(), this);
+        this.getServer().getPluginManager().registerEvents(new MobsEvents(this), this);
     }
 
     @Override

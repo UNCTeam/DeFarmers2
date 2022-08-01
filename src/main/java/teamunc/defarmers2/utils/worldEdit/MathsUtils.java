@@ -19,4 +19,11 @@ public class MathsUtils {
         }
         return locations;
     }
+
+    public static Location getRandomLocation(Location location, int radius) {
+        Location randomLocation = location.clone();
+        randomLocation.setX(randomLocation.getX() + (Math.random() * radius * 2) - radius);
+        randomLocation.setZ(randomLocation.getZ() + (Math.random() * radius * 2) - radius);
+        return randomLocation;
+    }
 }

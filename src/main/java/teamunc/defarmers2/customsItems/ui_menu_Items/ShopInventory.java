@@ -37,18 +37,13 @@ public class ShopInventory implements Listener {
 
     // You can call this whenever you want to put the items in
     public void initializeItems(Inventory inv, Team team) {
-        HashMap<String, Integer> artefactNumberMap = TeamManager.getInstance().getTeamsArtefacts(team);
-        HashMap<String, Integer> mobNumberMap = TeamManager.getInstance().getTeamsMobs(team);
+
 
         // Add all existing custom ui items to the inventory (if they are enabled)
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
-            CustomItem item = CustomItemsManager.getInstance().getCustomItem(type);
-
+            CustomItem customItem = CustomItemsManager.getInstance().getCustomItem(type);
             if (GameOptions.getInstance().isCustomItemEnabled(type) && type != "SHOP") {
-                int price = GameOptions.getInstance().getCustomItemPrice(type);
-                int nbActuelle = artefactNumberMap.getOrDefault(type, 0);
-                this.initLoreAndTitle(item, price, nbActuelle);
-                inv.addItem(new CustomUIItem(item));
+                inv.addItem(new CustomUIItem(customItem,team));
             }
         }
 
@@ -56,12 +51,8 @@ public class ShopInventory implements Listener {
         int i = 27;
         for (DeFarmersEntityType type : CustomMobsManager.getAllCustomMobsTypes()) {
             ItemStack item = type.getMobHeadItem();
-
             if (GameOptions.getInstance().isCustomMobEnabled(type)) {
-                int price = GameOptions.getInstance().getCustomMobPrice(type);
-                int nbActuelle = mobNumberMap.getOrDefault(type.toString(), 0);
-                this.initLoreAndTitle(item, price, nbActuelle);
-                inv.setItem(i, new CustomUIItem(item));
+                inv.setItem(i, new CustomUIItem(item,team));
                 i++;
             }
         }
@@ -74,29 +65,6 @@ public class ShopInventory implements Listener {
         ent.openInventory(inv);
         Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer((Player) ent);
         initializeItems(inv, team);
-    }
-
-    private CustomItem initLoreAndTitle(CustomItem item, int price, int nbActuelle) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§r§f§cBuy " + meta.getDisplayName());
-
-        List<String> lore = Arrays.asList("", "§r§l§cClick to buy this item", "Price : §r§f§a" + price, "§r§l§cYou have : §r§f§a" + nbActuelle);
-        System.out.println(item.getDescription());
-        //lore.addAll(item.getDescription());
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private ItemStack initLoreAndTitle(ItemStack item, int price, int nbActuelle) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§r§f§cBuy " + meta.getDisplayName());
-
-        List<String> lore = Arrays.asList("", "§r§l§cClick to buy this item", "Price : §r§f§a" + price, "§r§l§cYou have : §r§f§a" + nbActuelle);
-        //lore.addAll(item.getItemMeta().getLore());
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return item;
     }
 
     // Check for clicks on items
@@ -112,13 +80,13 @@ public class ShopInventory implements Listener {
         // verify current item is not null
         if (clickedItem == null || clickedItem.getType().isAir()) return;
 
-
+        // create a new custom ui item from the clicked item just to buy it and update lore
         final Team team = TeamManager.getInstance().getTeamOfPlayer(p);
+        CustomUIItem item = new CustomUIItem(clickedItem,team);
 
-        // verify its a custom ui item
-        CustomUIItem item = new CustomUIItem(clickedItem);
+        Defarmers2.getInstance().getGameManager().getTeamManager().buy(team,item);
 
-        item.buy(team);
+        e.setCurrentItem(item);
     }
 
     // Cancel dragging in our inventory

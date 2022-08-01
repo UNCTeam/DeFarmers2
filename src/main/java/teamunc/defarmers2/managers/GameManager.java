@@ -3,6 +3,8 @@ package teamunc.defarmers2.managers;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import teamunc.defarmers2.serializables.GameOptions;
 import teamunc.defarmers2.serializables.GameStates;
@@ -105,6 +107,9 @@ public class GameManager extends Manager {
         // setting up team location
         this.getTeamManager().setupTeams();
 
+        // setting difficulty
+        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.HARD);
+
         // setting up phase 1 area
         ApiWorldEdit.managePhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1), true);
 
@@ -116,8 +121,18 @@ public class GameManager extends Manager {
 
         setupPlayers(false);
 
+        // apply resistance to all player
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 10));
+        }
+
         // teleport players to phase 1
         teleportPlayers(GameStates.GameState.PHASE1);
+
+        // little particle effect
+        for (Location location : this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1)) {
+            location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, location, 10);
+        }
 
         // apply inGameInfoScoreboards
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -275,5 +290,9 @@ public class GameManager extends Manager {
 
     public CustomMobsManager getCustomMobsManager() {
         return CustomMobsManager.getInstance();
+    }
+
+    public void nextPhase() {
+        this.getTickActionsManager().nextPhase();
     }
 }

@@ -73,4 +73,9 @@ public class TickActionsManager extends Manager{
         return secPasse % 60;
     }
 
+    public void nextPhase() {
+        GameStates gameStates = plugin.getGameManager().getGameStates();
+        tickLoops.get(gameStates.getState()).onEnd();
+    }
+
 }

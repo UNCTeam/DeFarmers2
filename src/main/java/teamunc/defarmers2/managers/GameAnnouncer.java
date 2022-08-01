@@ -11,4 +11,10 @@ public class GameAnnouncer {
         Bukkit.getWorlds().get(0).getPlayers().forEach(player -> player.sendTitle(message, "", 10, 20, 10));
 
     }
+
+    public static void announceTitle(String message, String subtitle, int fadeIn, int stay, int fadeOut) {
+        Defarmers2.getInstance().getLogger().log(Level.INFO, "Announcing subtitle: " + message);
+        Bukkit.getWorlds().get(0).getPlayers().forEach(player -> player.sendTitle(message, subtitle, fadeIn, stay, fadeOut));
+
+    }
 }

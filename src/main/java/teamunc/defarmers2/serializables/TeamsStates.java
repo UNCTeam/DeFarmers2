@@ -8,108 +8,95 @@ import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.managers.CustomItemsManager;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.UUID;
 
 public class TeamsStates implements Serializable {
-    private final HashMap<String,Integer> teamsScores = new HashMap<>();
-    private final HashMap<String,Integer> teamsMoneys = new HashMap<>();
-    private final HashMap<String,HashMap<String,Integer>> teamsArtefacts = new HashMap<>();
-    private final HashMap<String,HashMap<String,Integer>> teamsMobs = new HashMap<>();
-    private final HashMap<String,HashMap<GameStates.GameState, Location>> teamsSpawnPerPhase = new HashMap<>();
+    private final HashMap<String, ArrayList<UUID>> teamsCustomMobsAssociation = new HashMap<>();
 
-    //set team scores
-    public void setTeamScore(String teamID, int score){
-        teamsScores.put(teamID, score);
-    }
+    private final ArrayList<TeamInfo> teamsInfos = new ArrayList<>();
 
-    //set team money
+
+    // number of the last team that died in the game (used to determine the winner) (1 = first team dead, 2 = second team dead, etc.)
+    private int lastScore = 0;
+
+    /// TEAM MONEY ///
     public void setTeamMoney(String teamID, int money){
-        teamsMoneys.put(teamID, money);
-    }
-
-    //get team score
-    public int getTeamScore(String teamID){
-        return teamsScores.get(teamID);
-    }
-
-    // team init ?
-    public boolean isTeamInit(String teamID){
-        return teamsSpawnPerPhase.containsKey(teamID);
-    }
-
-    //get team money
-    public int getTeamMoney(String teamID){
-        return teamsMoneys.get(teamID);
-    }
-
-    //add team score
-    public void addTeamScore(String teamID, int score){
-        teamsScores.put(teamID, teamsScores.get(teamID) + score);
-    }
-
-    //add team money
-    public void addTeamMoney(String teamID, int money){
-        teamsMoneys.put(teamID, teamsMoneys.get(teamID) + money);
-    }
-
-    // set team spawn per phase
-    public void setTeamSpawnPerPhase(String teamID, GameStates.GameState phase, Location location){
-        if(!teamsSpawnPerPhase.containsKey(teamID)){
-            teamsSpawnPerPhase.put(teamID, new HashMap<>());
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                teamInfo.setMoney(money);
+            }
         }
-        teamsSpawnPerPhase.get(teamID).put(phase, location);
     }
-
-    //subtract team score
-    public void removeTeamScore(String teamID, int score){
-        teamsScores.put(teamID, teamsScores.get(teamID) - score);
+    public int getTeamMoney(String teamID){
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                return teamInfo.getMoney();
+            }
+        }
+        return 0;
     }
-
-    //subtract team money
+    public void addTeamMoney(String teamID, int money){
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                teamInfo.setMoney(teamInfo.getMoney() + money);
+            }
+        }
+    }
     public void removeTeamMoney(String teamID, int money){
-        teamsMoneys.put(teamID, teamsMoneys.get(teamID) - money);
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                teamInfo.setMoney(teamInfo.getMoney() - money);
+            }
+        }
     }
 
-    //reset team scores
-    public void resetTeamScores(){
-        teamsScores.clear();
+    /// TEAMS SCORE ///
+    public int getTeamScore(String teamID){
+        for (TeamInfo team : teamsInfos) {
+            if (team.getTeamID().equals(teamID)) {
+                return team.getScore();
+            }
+        }
+        return 0;
+    }
+    public void setTeamScore(String teamID, int score){
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                teamInfo.setScore(score);
+            }
+        }
+    }
+    public void addTeamScore(String teamID, int score){
+        for (TeamInfo team : teamsInfos) {
+            if (team.getTeamID().equals(teamID)) {
+                team.setScore(team.getScore() + score);
+            }
+        }
+    }
+    public void removeTeamScore(String teamID, int score) {
+        for (TeamInfo team : teamsInfos) {
+            if (team.getTeamID().equals(teamID)) {
+                team.setScore(team.getScore() - score);
+            }
+        }
     }
 
-    //reset team moneys
-    public void resetTeamMoneys(){
-        teamsMoneys.clear();
-    }
-
-    //reset team
+    /// MANAGE TEAMS ///
     public void resetTeam(String teamID){
-        teamsScores.remove(teamID);
-        teamsMoneys.remove(teamID);
-        teamsSpawnPerPhase.remove(teamID);
-        teamsArtefacts.remove(teamID);
-        teamsMobs.remove(teamID);
+        this.teamsInfos.removeIf(team -> team.getTeamID().equals(teamID));
     }
-
-    //get all teams
+    public boolean isTeamInit(String teamID){
+        return teamsInfos.stream().anyMatch(team -> team.getTeamID().equals(teamID));
+    }
     public Set<Team> getAllTeams(){
         return Bukkit.getScoreboardManager().getMainScoreboard().getTeams();
     }
-
-    //get team spawn location
-    public Location getTeamSpawnLocation(String teamID, GameStates.GameState gameState){
-        return teamsSpawnPerPhase.get(teamID).get(gameState);
+    public void addTeam(String teamID, int money, int score, boolean isDead, HashMap<String, Integer> artefacts, HashMap<String, Integer> mobs, HashMap<GameStates.GameState, Location> spawnPerPhase, ArrayList<UUID> customMobsAssociation){
+        teamsInfos.add(new TeamInfo(teamID, score, money, isDead, artefacts, mobs, spawnPerPhase, customMobsAssociation));
     }
-
-    public Location[] getAllSpawnLocationsForAPhase(GameStates.GameState gameState){
-        Location[] locations = new Location[teamsSpawnPerPhase.size()];
-        int i = 0;
-        for(String teamID : teamsSpawnPerPhase.keySet()){
-            locations[i] = teamsSpawnPerPhase.get(teamID).get(gameState);
-            i++;
-        }
-        return locations;
-    }
-
     public int getTeamIndex(String name) {
         int index = 0;
         for (Team team : getAllTeams()) {
@@ -120,52 +107,120 @@ public class TeamsStates implements Serializable {
         }
         return -1;
     }
+    public void setDeadTeam(String teamName) {
+        for (TeamInfo team : teamsInfos) {
+            if (team.getTeamID().equals(teamName)) {
+                team.setDead(true);
+            }
+        }
+    }
 
+    /// TEAMS LOCATIONS ///
+    public Location getTeamSpawnLocation(String teamID, GameStates.GameState gameState){
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                return teamInfo.getSpawnLocationForAPhase(gameState);
+            }
+        }
+        return null;
+    }
+    public Location[] getAllSpawnLocationsForAPhase(GameStates.GameState gameState){
+        ArrayList<Location> locations = new ArrayList<>();
+        for (TeamInfo teamInfo : teamsInfos) {
+            locations.add(teamInfo.getSpawnLocationForAPhase(gameState));
+        }
+        return locations.toArray(new Location[locations.size()]);
+    }
+    public void setTeamSpawnPerPhase(String teamID, GameStates.GameState phase, Location location){
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamID)) {
+                teamInfo.setSpawnLocationForAPhase(phase, location);
+            }
+        }
+    }
+
+    /// TEAMS CUSTOM ITEMS ///
     public void addArtefactInTeam(String name, CustomUIItem customUIItem) {
-        addStuffToTeam(name, customUIItem, teamsArtefacts);
-    }
-
-    private void addStuffToTeam(String name, CustomUIItem customUIItem, HashMap<String, HashMap<String, Integer>> teamsList) {
-        if(!teamsList.containsKey(name)){
-            teamsList.put(name, new HashMap<>());
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(name)) {
+                teamInfo.addArtefact(customUIItem.getCustomType(), customUIItem.getAmount());
+            }
         }
-        if (!teamsList.get(name).containsKey(customUIItem.getCustomType())) {
-            teamsList.get(name).put(customUIItem.getCustomType(), 0);
-        }
-
-        teamsList.get(name).put(customUIItem.getCustomType(), teamsList.get(name).get(customUIItem.getCustomType()) + 1);
     }
-
-    public void addMobInTeam(String name, CustomUIItem customUIItem) {
-        // if team doesn't exist, create it
-        addStuffToTeam(name, customUIItem, teamsMobs);
-    }
-
     public HashMap<String, Integer> getTeamsArtefacts(Team team) {
-        return teamsArtefacts.get(team.getName());
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(team.getName())) {
+                return teamInfo.getArtefacts();
+            }
+        }
+        return null;
     }
-
     public CustomItem[] getArtefactsInTeam(String name) {
-        CustomItem[] customItems = new CustomItem[teamsArtefacts.get(name).size()];
+        HashMap<String, Integer> artefacts = null;
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(name)) {
+                artefacts = teamInfo.getArtefacts();
+            }
+        }
+        if (artefacts == null) return null;
+
+        CustomItem[] customItems = new CustomItem[artefacts.size()];
         int i = 0;
-        for (String customType : teamsArtefacts.get(name).keySet()) {
+        for (String customType : artefacts.keySet()) {
             CustomItem customItem = CustomItemsManager.getInstance().getCustomItem(customType);
-            customItem.setAmount(teamsArtefacts.get(name).get(customType));
+            customItem.setAmount(artefacts.get(customType));
             customItems[i] = customItem;
             i++;
         }
         return customItems;
     }
 
-    public HashMap<String, Integer> getTeamsMobs(Team team) {
-        return teamsMobs.get(team.getName());
+    /// TEAM MOBS ///
+    public void addSelectedMobInTeam(String name, CustomUIItem customUIItem) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(name)) {
+                teamInfo.addMob(customUIItem.getCustomType(), customUIItem.getAmount());
+            }
+        }
+    }
+    public HashMap<String, Integer> getTeamsSelectedMobs(Team team) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(team.getName())) {
+                return teamInfo.getMobs();
+            }
+        }
+        return null;
     }
 
-    public void initArtefactsList(String name) {
-        teamsArtefacts.put(name, new HashMap<>());
+    /// TEAM MOBS SPAWNED ///
+    public ArrayList<UUID> getMobsOfATeam(String teamName) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamName)) {
+                return teamInfo.getCustomMobsAssociation();
+            }
+        }
+        return null;
+    }
+    public void addCustomMob(String teamName, UUID mob) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamName)) {
+                teamInfo.addCustomMobAssociation(mob);
+            }
+        }
+    }
+    public void removeCustomMob(String teamName, UUID mob) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamName)) {
+                teamInfo.removeCustomMobAssociation(mob);
+            }
+        }
     }
 
-    public void initMobsList(String name) {
-        teamsMobs.put(name, new HashMap<>());
+    /// OTHER ///
+    public int getLastScore() {
+        return lastScore;
+    }
+    public void setLastScore(int number) {
+        this.lastScore = number;
     }
 }

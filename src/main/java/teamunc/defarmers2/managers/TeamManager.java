@@ -2,13 +2,17 @@ package teamunc.defarmers2.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
 import teamunc.defarmers2.customsItems.CustomItem;
 import teamunc.defarmers2.customsItems.ShopItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
+import teamunc.defarmers2.customsItems.ui_menu_Items.ItemTypeEnum;
 import teamunc.defarmers2.serializables.GameStates;
 import teamunc.defarmers2.serializables.TeamsStates;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
@@ -20,6 +24,7 @@ public class TeamManager extends Manager{
 
     // SINGLETON
     private static TeamManager instance;
+
     public static TeamManager getInstance() {
         return instance;
     }
@@ -196,6 +201,15 @@ public class TeamManager extends Manager{
     public void setupTeamSpawn() {
         int nbTeam = this.getTeamStates().getAllTeams().size();
 
+        // waiting for players
+        Location center0 = this.plugin.getGameManager().getPhaseSpawn(GameStates.GameState.WAITING_FOR_PLAYERS);
+
+        for (Team team : this.getTeamStates().getAllTeams()) {
+            if (team != null) {
+                this.getTeamStates().setTeamSpawnPerPhase(team.getName(), GameStates.GameState.WAITING_FOR_PLAYERS, center0);
+            }
+        }
+
         // phase 1
         Location center1 = this.plugin.getGameManager().getPhaseSpawn(GameStates.GameState.PHASE1);
         int radius1 = 17*nbTeam + 13;
@@ -253,21 +267,26 @@ public class TeamManager extends Manager{
 
     public void reset() {
         teamsStates.getAllTeams().stream().forEach(team -> teamsStates.resetTeam(team.getName()));
+        teamsStates.setLastScore(0);
     }
 
     public void setupTeams() {
+
+        // setup teams
+        int money = this.plugin.getGameManager().getGameOptions().getStartingMoney();
+        for (Team team : this.getTeamStates().getAllTeams()) {
+            if (team != null) {
+                this.teamsStates.addTeam(team.getName(), money, 0, false, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>());
+            }
+        }
+
         // setup spawn
         setupTeamSpawn();
 
-        // setup Moneys
-        for (Team team : this.getTeamStates().getAllTeams()) {
-            if (team != null) {
-                this.getTeamStates().setTeamMoney(team.getName(), this.plugin.getGameManager().getGameOptions().getStartingMoney());
-                this.getTeamStates().setTeamScore(team.getName(), 0);
-                this.getTeamStates().initMobsList(team.getName());
-                this.getTeamStates().initArtefactsList(team.getName());
-            }
-        }
+        // setup classement score
+        teamsStates.setLastScore(0);
+
+
     }
 
     public void calculateMoneyOfTeams() {
@@ -349,14 +368,89 @@ public class TeamManager extends Manager{
     }
 
     public void addAMobInTeam(String name, CustomUIItem customUIItem) {
-        this.teamsStates.addMobInTeam(name, customUIItem);
+        this.teamsStates.addSelectedMobInTeam(name, customUIItem);
     }
 
     public Set<Team> getTeams() {
         return this.teamsStates.getAllTeams();
     }
 
-    public HashMap<String, Integer> getTeamsMobs(Team team) {
-        return this.teamsStates.getTeamsMobs(team);
+    public HashMap<String, Integer> getSelectedTeamsMobs(Team team) {
+        return this.teamsStates.getTeamsSelectedMobs(team);
+    }
+
+    // une fois que le mob est acheté il est enregisté dans la list de mobs de la team
+    // mais les mobs ont aussi besoin que l'on note leurs UUID une fois spawné pour pouvoir leur attribuer une team
+    // et effectuer des actions sur eux, ici on récupère donc la liste des mobs qui sont en jeu (spawn) pour une team donnée
+    public ArrayList<UUID> getMobsSpawnedOfTeam(String name) {
+        return this.teamsStates.getMobsOfATeam(name);
+    }
+
+    public void addMobsSpawnedOfTeam(String name, UUID uuid) {this.teamsStates.addCustomMob(name,uuid);}
+
+    public void setDeadATeam(String teamName) {
+        this.teamsStates.setDeadTeam(teamName);
+
+        // set all players in spectator
+        for (String playerName : this.getTeam(teamName).getEntries()) {
+            Player player = Bukkit.getPlayer(playerName);
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+
+        GameAnnouncer.announceTitle("§cTeam " + teamName + " is dead !", "", 10, 40, 10);
+
+    }
+
+    public boolean buy(@NotNull Team team, CustomUIItem itemUI) {
+        int price = itemUI.getPrice();
+
+        int Money = this.getTeamMoney(team.getName());
+        if (Money < price) {
+            return false;
+        }
+
+        this.setTeamMoney(team.getName(), Money - price);
+        if (itemUI.typeOfCustom() == ItemTypeEnum.CUSTOM_ITEM)
+            this.addArtefactInTeam(team.getName(), itemUI);
+        else if (itemUI.typeOfCustom() == ItemTypeEnum.CUSTOM_MOB)
+            this.addAMobInTeam(team.getName(), itemUI);
+        else return false;
+
+        ItemMeta meta = itemUI.getItemMeta();
+        int nbActuelle = itemUI.getNbItem(team);
+        meta.setLore(Arrays.asList("", "§r§l§cClick to buy this item","Price : " + price,"§r§l§cYou have : §r§f§a" + nbActuelle));
+        itemUI.setItemMeta(meta);
+
+        return true;
+    }
+
+    public ArrayList<UUID> getAllSpawnedMobsOfAllTeams() {
+        ArrayList<UUID> res = new ArrayList<>();
+
+        for (Team team : getTeams()) {
+            res.addAll(getMobsSpawnedOfTeam(team.getName()));
+        }
+
+        return res;
+    }
+
+    public void removeMobSpawnedOfTeam(String name, UUID uuid) {
+        this.teamsStates.removeCustomMob(name,uuid);
+    }
+
+    /**
+     * check if the team is dead (no more associated mobs in game) and set up it's score according the classement
+     * @param name team name
+     */
+    public void getDeadTeamScoreIfTeamIsDead(String name) {
+        if (this.getMobsSpawnedOfTeam(name).size() != 0 || this.getTeamScore(name) > 0) return;
+
+        int classementActuelle = this.teamsStates.getLastScore() + 1;
+        int classementVeritable = this.getTeams().size() - classementActuelle + 1;
+        this.teamsStates.setLastScore(classementActuelle);
+
+        this.setTeamScore(name,classementActuelle);
+
+        this.setDeadATeam(name);
     }
 }
