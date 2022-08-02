@@ -26,4 +26,9 @@ public class DinnerboneItem extends CustomItem {
         return List.of("§r§7Description", "§r§7juste §cici");
     }
 
+    @Override
+    public int getDefaultPrice() {
+        return 5;
+    }
+
 }

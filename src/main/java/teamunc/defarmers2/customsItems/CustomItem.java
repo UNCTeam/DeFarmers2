@@ -34,4 +34,6 @@ public abstract class CustomItem extends ItemStack {
 
     @NotNull
     public abstract List<String> getDescription();
+
+    public abstract int getDefaultPrice();
 }

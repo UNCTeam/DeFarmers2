@@ -25,4 +25,9 @@ public class ArmageddonItem extends CustomItem {
     public @NotNull List<String> getDescription() {
         return List.of("§r§7Description", "§r§7juste §cici");
     }
+
+    @Override
+    public int getDefaultPrice() {
+        return 165;
+    }
 }

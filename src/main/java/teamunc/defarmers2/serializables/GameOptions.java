@@ -28,9 +28,9 @@ public class GameOptions {
     }
 
     public void initConfig() {
-        config.addDefault("timeForPhase1inSecond", 1800);
-        config.addDefault("timeForPhase2inSecond", 600);
-        config.addDefault("timeForPhase3inSecond", 1800);
+        config.addDefault("timeForPhase1inSecond", 900);
+        config.addDefault("timeForPhase2inSecond", 90);
+        config.addDefault("timeForPhase3inSecond", 900);
 
         config.addDefault("lobbyLocation", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));
 
@@ -42,7 +42,7 @@ public class GameOptions {
 
 
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
-            config.addDefault("custom-item." + type + ".price", 100);
+            config.addDefault("custom-item." + type + ".price", CustomItemsManager.getInstance().getCustomItem(type).getDefaultPrice());
             config.addDefault("custom-item." + type + ".enabled", true);
         }
 
