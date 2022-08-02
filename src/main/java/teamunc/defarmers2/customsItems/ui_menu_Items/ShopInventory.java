@@ -41,7 +41,7 @@ public class ShopInventory implements Listener {
 
         // Add all existing custom ui items to the inventory (if they are enabled)
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
-            CustomItem customItem = CustomItemsManager.getInstance().getCustomItem(type);
+            CustomItem customItem = CustomItemsManager.getCustomItem(type);
             if (GameOptions.getInstance().isCustomItemEnabled(type) && type != "SHOP") {
                 inv.addItem(new CustomUIItem(customItem,team));
             }

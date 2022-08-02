@@ -73,7 +73,7 @@ public class CustomItemsManager extends Manager {
     }
 
 
-    public CustomItem getCustomItem(String type) {
+    public static CustomItem getCustomItem(String type) {
         // create item from the type and return it from all the custom items
         switch (type) {
             case "SHOP":

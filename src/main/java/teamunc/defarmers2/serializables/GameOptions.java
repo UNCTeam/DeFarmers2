@@ -36,13 +36,13 @@ public class GameOptions {
 
         config.addDefault("phase1LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 230, 0));
         config.addDefault("phase2LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 100, 0));
-        config.addDefault("phase3LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, -50, 0));
+        config.addDefault("phase3LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 0, 0));
 
         config.addDefault("starting-money", 0);
 
 
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
-            config.addDefault("custom-item." + type + ".price", CustomItemsManager.getInstance().getCustomItem(type).getDefaultPrice());
+            config.addDefault("custom-item." + type + ".price", CustomItemsManager.getCustomItem(type).getDefaultPrice());
             config.addDefault("custom-item." + type + ".enabled", true);
         }
 

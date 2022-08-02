@@ -167,7 +167,7 @@ public class TeamsStates implements Serializable {
         CustomItem[] customItems = new CustomItem[artefacts.size()];
         int i = 0;
         for (String customType : artefacts.keySet()) {
-            CustomItem customItem = CustomItemsManager.getInstance().getCustomItem(customType);
+            CustomItem customItem = CustomItemsManager.getCustomItem(customType);
             customItem.setAmount(artefacts.get(customType));
             customItems[i] = customItem;
             i++;
