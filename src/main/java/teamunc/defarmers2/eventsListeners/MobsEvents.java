@@ -20,7 +20,7 @@ public class MobsEvents extends AbstractListener {
 
     @EventHandler
     public void onMobDeath(EntityDeathEvent event) {
-        if (this.plugin.getGameManager().getGameStates().getState() == GameStates.GameState.WAITING_FOR_PLAYERS) {
+        if (!this.plugin.getGameManager().getGameStates().getState().isInGamePhase()) {
             return;
         }
 
@@ -31,6 +31,7 @@ public class MobsEvents extends AbstractListener {
             for (UUID uuid : uuids) {
                 if (event.getEntity().getUniqueId().equals(uuid)) {
                     teamManager.removeMobSpawnedOfTeam(team.getName(), uuid);
+                    break;
                 }
             }
         }

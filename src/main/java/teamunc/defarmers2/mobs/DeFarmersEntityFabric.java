@@ -32,7 +32,7 @@ public class DeFarmersEntityFabric {
 
         // create a new random location within the radius
         Location randomLocation = MathsUtils.getRandomLocation(location, radius);
-        randomLocation.setY(location.getY() - 31);
+        randomLocation.setY(location.getY() - 26);
         try {
             switch (type) {
                 case ZOMBIE:
@@ -87,20 +87,15 @@ public class DeFarmersEntityFabric {
         }
 
         // add it to the spawned Mobs team
-        if (mob != null) Defarmers2.getInstance().getGameManager().getTeamManager().addMobsSpawnedOfTeam(teamName,mob.getUniqueId());
+        // aply effects
+        if (mob != null) {
+            mob.setCustomName(ChatColor.valueOf(teamName) + "[" + teamName + "] " + mob.getName());
+            mob.setCustomNameVisible(true);
+            mob.setPersistent(true);
+            Defarmers2.getInstance().getGameManager().getTeamManager().addMobsSpawnedOfTeam(teamName, mob.getUniqueId());
+        }
 
         return mob;
-    }
-
-    public void initMob(Mob mob, String teamName) {
-        // set custom name
-        mob.setCustomName(ChatColor.valueOf(teamName) + "["+teamName+"] " + mob.getName());
-        mob.setCustomNameVisible(true);
-
-        LivingEntity nearestMob = Defarmers2.getInstance().getGameManager().getCustomMobsManager().getNearestLivingEntity(null, mob, teamName);
-
-        mob.setTarget(nearestMob);
-
     }
 }
 

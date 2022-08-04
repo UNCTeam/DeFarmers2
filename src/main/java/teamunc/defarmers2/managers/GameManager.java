@@ -243,6 +243,8 @@ public class GameManager extends Manager {
                 return this.gameOptions.getPhase2LocationCenter();
             case PHASE3:
                 return this.gameOptions.getPhase3LocationCenter();
+            case END_GAME:
+                return this.gameOptions.getEndGameLocationCenter();
             default:
                 return this.gameOptions.getLobbyLocation();
         }
@@ -250,7 +252,7 @@ public class GameManager extends Manager {
 
     public void teleportPlayers(GameStates.GameState state) {
         // teleportation au point de spawn exact si on est pas en jeu
-        if (state == GameStates.GameState.WAITING_FOR_PLAYERS) {
+        if (!state.isInGamePhase()) {
             this.getTeamManager().teleportToExactSpawn(state);
         }
         // teleportation au point de spawn de chaque team si on est en jeu

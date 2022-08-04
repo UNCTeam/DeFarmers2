@@ -3,6 +3,7 @@ package teamunc.defarmers2.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -69,39 +70,65 @@ public class CustomMobsManager extends Manager{
                 }
             }
         }
+    }
 
-        // init Targets
+    public void updateMobsTargets() {
+        GameManager gameManager = Defarmers2.getInstance().getGameManager();
+        TeamManager teamManager = gameManager.getTeamManager();
+        GameStates gameStates = gameManager.getGameStates();
         for (Team team : teamManager.getTeams()) {
             for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
+                Entity NextTarget = null;
                 Mob mob = (Mob) Bukkit.getEntity(uuid);
-                if (mob != null) {
-                    entityFabric.initMob(mob, team.getName());
-                } else Defarmers2.getInstance().getLogger().log(Level.WARNING,"A mob of the team " + team.getName() + " seem to not been spawned correctly");
+
+                if (mob == null) {
+                    // main entity is dead
+                    removeMobFromTheGame(uuid, team.getName());
+                } else {
+                    if (!gameStates.hasMobTargeting(uuid)) {
+                        // set a new first target
+                        NextTarget = getNearestLivingEntity(null, mob, team.getName());
+                        gameStates.setMobTargeting(uuid, NextTarget.getUniqueId());
+                    } else {
+                        UUID targetedUuid = gameStates.getMobTargeting(uuid);
+                        Entity targetedEntity = Bukkit.getEntity(targetedUuid);
+
+                        if (targetedEntity != null) {
+                            NextTarget = targetedEntity;
+                        } else {
+                            // targeted entity is dead
+                            gameStates.removeMobTargeting(targetedUuid);
+                            // todo nearest entity
+                            NextTarget = getNearestLivingEntity(null, mob, team.getName());
+                        }
+                    }
+                }
+
+                if (NextTarget != null) {
+                    mob.setTarget((LivingEntity) NextTarget);
+                }
             }
         }
     }
 
-    // usefull for Focus custom item
-    public boolean setTargetOfMobsOfATeamToAnOtherTeam(String sourceTeam, String targetedTeam) {
-        boolean mobsFound = false;
-        TeamManager teamManager = this.plugin.getGameManager().getTeamManager();
-        ArrayList<UUID> mobsSourceTeam = teamManager.getMobsSpawnedOfTeam(sourceTeam);
-        ArrayList<UUID> mobsTargetedTeam = teamManager.getMobsSpawnedOfTeam(targetedTeam);
+    public void removeMobFromTheGame(UUID mobUuid, String teamName) {
+        GameManager gameManager = Defarmers2.getInstance().getGameManager();
+        TeamManager teamManager = gameManager.getTeamManager();
+        GameStates gameStates = gameManager.getGameStates();
 
-        for (UUID mobUniqueId : mobsSourceTeam) {
-            Entity entity = Bukkit.getEntity(mobUniqueId);
-            if (entity instanceof Mob) {
-                Mob mob = (Mob) entity;
+        if (gameStates.hasMobTargeting(mobUuid))
+            gameStates.removeMobTargeting(mobUuid);
 
-                LivingEntity nearestMob = getNearestLivingEntity(mobsTargetedTeam, mob, sourceTeam);
-
-                if (nearestMob != null) {
-                    mob.setTarget(nearestMob);
-                    mobsFound = true;
+        if (teamName == null) {
+            for (Team team : teamManager.getTeams()) {
+                if (teamManager.getMobsSpawnedOfTeam(team.getName()).contains(mobUuid)) {
+                    teamName = team.getName();
+                    break;
                 }
             }
         }
-        return mobsFound;
+
+        teamManager.removeMobSpawnedOfTeam(teamName, mobUuid);
     }
 
     /**
@@ -111,7 +138,7 @@ public class CustomMobsManager extends Manager{
      * @return
      */
     @Nullable
-    public LivingEntity getNearestLivingEntity(ArrayList<UUID> mobsTargetedTeam, Mob mob, String teamName) {
+    public Mob getNearestLivingEntity(ArrayList<UUID> mobsTargetedTeam, Mob mob, String teamName) {
         TeamManager teamManager = this.plugin.getGameManager().getTeamManager();
 
         // if there is no mob in the list, return the nearest mob of the list of mobs in other teams
@@ -125,26 +152,27 @@ public class CustomMobsManager extends Manager{
         }
 
         // get nearest mob of targeted team
-        double distance = Double.MAX_VALUE;
-        LivingEntity nearestMob = null;
-        for (UUID mobUniqueIdTargetedTeam : mobsTargetedTeam) {
-            Entity entityTargetedTeam = Bukkit.getEntity(mobUniqueIdTargetedTeam);
-            if (entityTargetedTeam instanceof Mob) {
-                Mob mobTargetedTeam = (Mob) entityTargetedTeam;
-                double distanceToTargetedTeam = mob.getLocation().distance(mobTargetedTeam.getLocation());
-                if (distanceToTargetedTeam < distance) {
-                    distance = distanceToTargetedTeam;
-                    nearestMob = mobTargetedTeam;
+        Mob nearestMob = null;
+
+        if (mobsTargetedTeam.size() > 0) {
+            double distance = Double.MAX_VALUE;
+            for (UUID uuid : mobsTargetedTeam) {
+                Entity entity = Bukkit.getEntity(uuid);
+                if (entity instanceof Mob) {
+                    Mob mobTargeted = (Mob) entity;
+                    double newDistance = mob.getLocation().distance(mobTargeted.getLocation());
+                    if (newDistance < distance) {
+                        distance = newDistance;
+                        nearestMob = mobTargeted;
+                    }
                 }
             }
         }
+
         return nearestMob;
     }
 
-    public void setNewTarget(String name, Mob mob) {
-        LivingEntity nearestMob = getNearestLivingEntity(null, mob, name);
-        if (nearestMob != null) {
-            mob.setTarget(nearestMob);
-        }
+    public UUID getTargetUUID(String name, Mob mob) {
+        return null;
     }
 }

@@ -31,12 +31,15 @@ public class GameOptions {
         config.addDefault("timeForPhase1inSecond", 900);
         config.addDefault("timeForPhase2inSecond", 90);
         config.addDefault("timeForPhase3inSecond", 900);
+        config.addDefault("timeForEndGameinSecond", 180);
 
         config.addDefault("lobbyLocation", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));
 
         config.addDefault("phase1LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 230, 0));
         config.addDefault("phase2LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 100, 0));
         config.addDefault("phase3LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 0, 0));
+
+        config.addDefault("endGameLocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));
 
         config.addDefault("starting-money", 0);
 
@@ -82,6 +85,10 @@ public class GameOptions {
 
     public Location getLobbyLocation() {
         return config.getLocation("lobbyLocation");
+    }
+
+    public Location getEndGameLocationCenter() {
+        return config.getLocation("endGameLocationCenter");
     }
 
     public int getStartingMoney() {

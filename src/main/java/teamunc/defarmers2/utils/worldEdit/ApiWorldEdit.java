@@ -69,7 +69,7 @@ public class ApiWorldEdit {
             setupArea(locations, "phase3");
         } else {
             ArrayList<Location> locations2 = new ArrayList<>();
-            locations2.add(locations[0].clone().add(0,-20, 0));
+            locations2.add(locations[0].clone().add(0,0, 0));
             locations2.add(locations2.get(0).clone().add(50, 0, 50));
             locations2.add(locations2.get(0).clone().add(0, 0, 50));
             locations2.add(locations2.get(0).clone().add(50, 0, 0));
@@ -78,7 +78,7 @@ public class ApiWorldEdit {
             locations2.add(locations2.get(0).clone().add(-50, 0, -50));
             locations2.add(locations2.get(0).clone().add(50, 0, -50));
             locations2.add(locations2.get(0).clone().add(-50, 0, 50));
-            resetArea(locations);
+            resetArea(locations2.toArray(new Location[locations.length]));
         }
     }
 

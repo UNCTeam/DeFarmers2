@@ -14,8 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public class TeamsStates implements Serializable {
-    private final HashMap<String, ArrayList<UUID>> teamsCustomMobsAssociation = new HashMap<>();
-
     private final ArrayList<TeamInfo> teamsInfos = new ArrayList<>();
 
 
@@ -113,6 +111,15 @@ public class TeamsStates implements Serializable {
                 team.setDead(true);
             }
         }
+    }
+
+    public boolean isTeamDead(String name) {
+        for (TeamInfo team : teamsInfos) {
+            if (team.getTeamID().equals(name)) {
+                return team.isDead();
+            }
+        }
+        return false;
     }
 
     /// TEAMS LOCATIONS ///

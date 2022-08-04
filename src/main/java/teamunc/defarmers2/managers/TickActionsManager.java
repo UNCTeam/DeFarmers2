@@ -28,6 +28,7 @@ public class TickActionsManager extends Manager{
         registerTickLoop(GameStates.GameState.PHASE1, new TickPhase1());
         registerTickLoop(GameStates.GameState.PHASE2, new TickPhase2());
         registerTickLoop(GameStates.GameState.PHASE3, new TickPhase3());
+        registerTickLoop(GameStates.GameState.END_GAME, new TickEndGame());
     }
 
     @Override

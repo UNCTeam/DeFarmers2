@@ -17,6 +17,8 @@ import teamunc.defarmers2.serializables.GameStates;
 import teamunc.defarmers2.serializables.TeamsStates;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
+import java.lang.reflect.GenericDeclaration;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 public class TeamManager extends Manager{
@@ -201,12 +203,13 @@ public class TeamManager extends Manager{
     public void setupTeamSpawn() {
         int nbTeam = this.getTeamStates().getAllTeams().size();
 
-        // waiting for players
+        // waiting for players and end game
         Location center0 = this.plugin.getGameManager().getPhaseSpawn(GameStates.GameState.WAITING_FOR_PLAYERS);
 
         for (Team team : this.getTeamStates().getAllTeams()) {
             if (team != null) {
                 this.getTeamStates().setTeamSpawnPerPhase(team.getName(), GameStates.GameState.WAITING_FOR_PLAYERS, center0);
+                this.getTeamStates().setTeamSpawnPerPhase(team.getName(), GameStates.GameState.END_GAME, center0);
             }
         }
 
@@ -388,6 +391,9 @@ public class TeamManager extends Manager{
 
     public void addMobsSpawnedOfTeam(String name, UUID uuid) {this.teamsStates.addCustomMob(name,uuid);}
 
+    public boolean isTeamDead(String name) {
+        return this.teamsStates.isTeamDead(name);
+    }
     public void setDeadATeam(String teamName) {
         this.teamsStates.setDeadTeam(teamName);
 
@@ -438,12 +444,18 @@ public class TeamManager extends Manager{
         this.teamsStates.removeCustomMob(name,uuid);
     }
 
+    public void checkIfTeamsDied() {
+        for (Team team : this.getTeams()) {
+            this.checkIfTeamDied(team.getName());
+        }
+    }
+
     /**
      * check if the team is dead (no more associated mobs in game) and set up it's score according the classement
      * @param name team name
      */
-    public void getDeadTeamScoreIfTeamIsDead(String name) {
-        if (this.getMobsSpawnedOfTeam(name).size() != 0 || this.getTeamScore(name) > 0) return;
+    public void checkIfTeamDied(String name) {
+        if (this.getMobsSpawnedOfTeam(name).size() != 0 || this.isTeamDead(name)) return;
 
         int classementActuelle = this.teamsStates.getLastScore() + 1;
         int classementVeritable = this.getTeams().size() - classementActuelle + 1;
@@ -452,5 +464,32 @@ public class TeamManager extends Manager{
         this.setTeamScore(name,classementActuelle);
 
         this.setDeadATeam(name);
+    }
+
+    public Location getTeamSpawnLocation(String name, GameStates.GameState state) {
+        return this.teamsStates.getTeamSpawnLocation(name, state);
+    }
+
+    public boolean isMoreThanOneTeamAlive() {
+        int nbTeamAlive = 0;
+
+        for (Team team : this.getTeams()) {
+            if (!this.isTeamDead(team.getName())) {
+                nbTeamAlive++;
+            }
+        }
+
+        return nbTeamAlive > 1;
+    }
+
+    public Team getWinnerTeamIfGameOver() {
+        if (!isMoreThanOneTeamAlive()) {
+            for (Team team : this.getTeams()) {
+                if (!this.isTeamDead(team.getName())) {
+                    return team;
+                }
+            }
+        }
+        return null;
     }
 }
