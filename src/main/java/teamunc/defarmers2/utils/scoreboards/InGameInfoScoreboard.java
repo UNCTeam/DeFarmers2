@@ -49,6 +49,7 @@ public class InGameInfoScoreboard extends VScoreboard{
             lines.add(" ");
             lines.add(ChatColor.BOLD + "" + ChatColor.GOLD + "Team Money : " + ChatColor.AQUA + gameManager.getTeamManager().getTeamMoney(team.getColor().name()));
             lines.add(ChatColor.BOLD + "" + ChatColor.GOLD + "Team Score : " + ChatColor.AQUA + gameManager.getTeamManager().getTeamScore(team.getColor().name()));
+            lines.add(ChatColor.BOLD + "" + ChatColor.GOLD + "Team Mobs  : " + ChatColor.AQUA + gameManager.getTeamManager().getMobsSpawnedOfTeam(team.getName()).size());
         }
 
         return lines;
