@@ -1,11 +1,16 @@
 package teamunc.defarmers2.customsItems;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
+import teamunc.defarmers2.managers.TeamManager;
+import teamunc.defarmers2.serializables.GameStates;
 
 import java.util.List;
+import java.util.UUID;
 
 public class UltimateSaverItem extends CustomItem {
 
@@ -15,15 +20,20 @@ public class UltimateSaverItem extends CustomItem {
 
     @Override
     public void onClick(CustomItemParams params) {
-        Player player = params.getPlayer();
+        TeamManager teamManager = TeamManager.getInstance();
 
-        Inventory inv = Bukkit.createInventory(null, 54, "Buy Menu");
+        for (Team team : teamManager.getTeams()) {
+            for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
+                Mob mob = (Mob) Bukkit.getEntity(uuid);
+                mob.teleport(teamManager.getTeamSpawnLocation(team.getName(), GameStates.GameState.PHASE3).subtract(0, 26, 0));
+            }
+        }
 
-        player.openInventory(inv);
+
     }
     @Override
     public @NotNull List<String> getDescription() {
-        return List.of("§r§7Description", "§r§7juste §cici");
+        return List.of("§r§7Toutes les armées sont tp", "§r§7à leur point de spawn.");
     }
 
     @Override

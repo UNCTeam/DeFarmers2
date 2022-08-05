@@ -17,13 +17,11 @@ public class ThunderItem extends CustomItem {
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
 
-        Inventory inv = Bukkit.createInventory(null, 54, "Buy Menu");
-
-        player.openInventory(inv);
+        player.getLocation().getWorld().strikeLightning(player.getLocation().subtract(0, 26, 0));
     }
     @Override
     public @NotNull List<String> getDescription() {
-        return List.of("§r§7Description", "§r§7juste §cici");
+        return List.of("§r§7Éclair la ou est le joueur. Voila.");
     }
 
     @Override

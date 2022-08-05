@@ -118,7 +118,7 @@ public class TeamChooserInventory implements Listener {
         // Cancel dragging in our inventory
     @EventHandler
     public void onInventoryClick(final InventoryDragEvent e) {
-        if (e.getInventory().getHolder() instanceof ShopHolder) {
+        if (e.getInventory().getHolder() instanceof TeamChooserHolder) {
             e.setCancelled(true);
         }
     }
