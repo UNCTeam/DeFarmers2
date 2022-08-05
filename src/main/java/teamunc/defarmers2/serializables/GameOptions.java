@@ -66,6 +66,8 @@ public class GameOptions {
                 return config.getInt("timeForPhase2inSecond");
             case PHASE3:
                 return config.getInt("timeForPhase3inSecond");
+            case END_GAME:
+                return config.getInt("timeForEndGameinSecond");
             default:
                 return -1;
         }

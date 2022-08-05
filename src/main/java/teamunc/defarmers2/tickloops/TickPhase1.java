@@ -12,7 +12,6 @@ public class TickPhase1 extends AbstractTickLoop {
     }
 
     public void actionsEachSecond() {
-        // TODO
     }
 
     @Override

@@ -6,14 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ShopHolder implements InventoryHolder {
 
-    private final Inventory inventory;
-
-    public ShopHolder(Inventory inventory) {
-        this.inventory = inventory;
-    }
-
+    @NotNull
     @Override
     public Inventory getInventory() {
-        return inventory;
+        return null;
     }
 }

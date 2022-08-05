@@ -61,7 +61,7 @@ public class ShopInventory implements Listener {
     // You can open the inventory with this
     public void openInventory(final HumanEntity ent) {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
-        Inventory inv = Bukkit.createInventory(new ShopHolder(null), 54, "Buy Menu");
+        Inventory inv = Bukkit.createInventory(new ShopHolder(), 54, "Buy Menu");
         ent.openInventory(inv);
         Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer((Player) ent);
         initializeItems(inv, team);

@@ -98,7 +98,6 @@ public class CustomMobsManager extends Manager{
                         } else {
                             // targeted entity is dead
                             gameStates.removeMobTargeting(targetedUuid);
-                            // todo nearest entity
                             NextTarget = getNearestLivingEntity(null, mob, team.getName());
                         }
                     }
@@ -129,6 +128,24 @@ public class CustomMobsManager extends Manager{
         }
 
         teamManager.removeMobSpawnedOfTeam(teamName, mobUuid);
+    }
+
+    public void focusOnATeam(Team team, Team teamCible) {
+        GameManager gameManager = Defarmers2.getInstance().getGameManager();
+        TeamManager teamManager = gameManager.getTeamManager();
+
+        ArrayList<UUID> mobsCibles = teamManager.getMobsSpawnedOfTeam(teamCible.getName());
+
+        for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
+            Entity entity = Bukkit.getEntity(uuid);
+            if (entity instanceof Mob) {
+                Mob mob = (Mob) entity;
+                Mob newTarget = getNearestLivingEntity(mobsCibles, mob, team.getName());
+                if (newTarget != null) {
+                    gameManager.getGameStates().setMobTargeting(uuid, newTarget.getUniqueId());
+                }
+            }
+        }
     }
 
     /**
