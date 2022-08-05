@@ -32,7 +32,7 @@ public class FocusItem extends CustomItem {
     }
     @Override
     public @NotNull List<String> getDescription() {
-        return List.of("§r§7Description", "§r§7juste §cici");
+        return List.of("§r§7Ouvre une interface", "§r§7permettant de choisir une armée à attaquer.");
     }
 
     @Override
