@@ -10,7 +10,7 @@ import java.util.List;
 public class FrozenItem extends CustomItem {
 
     public FrozenItem() {
-        super("Frozen", 7, "FROZEN");
+        super("Frozen", 7, "FROZEN",1);
     }
 
     @Override

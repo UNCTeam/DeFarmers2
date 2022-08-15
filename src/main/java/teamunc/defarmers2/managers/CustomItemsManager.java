@@ -69,7 +69,13 @@ public class CustomItemsManager extends Manager {
         String type = this.getCustomType(item.getItemMeta().getPersistentDataContainer());
         if (type == null) return;
 
-        getCustomItem(type).onClick(new CustomItemParams(player));
+        getCustomItem(type).executeOnClick(new CustomItemParams(player));
+
+        // durability
+        this.setCustomDurability(this.getCustomDurability() - params.getDurabilityUsed());
+        if (this.getCustomDurability() <= 0) {
+            this.setAmount(0);
+        }
     }
 
 

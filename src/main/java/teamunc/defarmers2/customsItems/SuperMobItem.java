@@ -18,7 +18,7 @@ import java.util.List;
 public class SuperMobItem extends CustomItem {
 
     public SuperMobItem() {
-        super("SuperMob", 12, "SUPERMOB");
+        super("SuperMob", 12, "SUPERMOB",1);
     }
 
     @Override

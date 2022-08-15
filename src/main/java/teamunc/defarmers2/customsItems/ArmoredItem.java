@@ -16,7 +16,7 @@ import java.util.UUID;
 public class ArmoredItem extends CustomItem {
 
     public ArmoredItem() {
-        super("Armored", 4, "ARMORED");
+        super("Armored", 4, "ARMORED",1);
     }
 
     @Override

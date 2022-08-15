@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DinnerboneItem extends CustomItem {
 
     public DinnerboneItem() {
-        super("Dinnerbone", 8, "DINNERBONE");
+        super("Dinnerbone", 8, "DINNERBONE",1);
     }
 
     @Override

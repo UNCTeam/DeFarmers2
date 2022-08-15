@@ -12,7 +12,7 @@ import java.util.List;
 public class MeteoriteItem extends CustomItem {
 
     public MeteoriteItem() {
-        super("Meteorite", 2, "METEORITE");
+        super("Meteorite", 2, "METEORITE",1);
     }
 
     @Override

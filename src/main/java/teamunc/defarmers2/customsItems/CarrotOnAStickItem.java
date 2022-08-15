@@ -10,7 +10,7 @@ import java.util.List;
 public class CarrotOnAStickItem extends CustomItem {
 
     public CarrotOnAStickItem() {
-        super("Carrot on a Stick", 3, "CARROTONASTICK");
+        super("Carrot on a Stick", 3, "CARROTONASTICK",5);
     }
 
     @Override

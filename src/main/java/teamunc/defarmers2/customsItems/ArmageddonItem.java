@@ -15,12 +15,13 @@ import java.util.Random;
 public class ArmageddonItem extends CustomItem {
 
     public ArmageddonItem() {
-        super("Armageddon", 11, "ARMAGEDDON");
+        super("Armageddon", 11, "ARMAGEDDON",1);
     }
 
     @Override
     public void onClick(CustomItemParams params) {
-        int random = new Random().nextInt(5,8);
+        Random r = new Random();
+        int random = r.nextInt(4) + 5;
 
         Location locCenter = GameManager.getInstance().getPhaseSpawn(GameStates.GameState.PHASE3).clone().subtract(0,26,0);
 

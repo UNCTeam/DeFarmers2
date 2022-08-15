@@ -10,7 +10,7 @@ import java.util.List;
 public class ThunderItem extends CustomItem {
 
     public ThunderItem() {
-        super("Thunder", 6, "THUNDER");
+        super("Thunder", 6, "THUNDER",1);
     }
 
     @Override

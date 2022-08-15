@@ -10,7 +10,7 @@ import java.util.List;
 public class WallThatItem extends CustomItem {
 
     public WallThatItem() {
-        super("Wall That", 5, "WALLTHAT");
+        super("Wall That", 5, "WALLTHAT",1);
     }
 
     @Override

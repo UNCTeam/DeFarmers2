@@ -17,7 +17,7 @@ import java.util.UUID;
 public class BuffItem extends CustomItem {
 
     public BuffItem() {
-        super("Buff", 16, "BUFF");
+        super("Buff", 16, "BUFF",1);
     }
 
     @Override

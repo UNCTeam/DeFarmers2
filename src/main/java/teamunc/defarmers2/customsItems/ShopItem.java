@@ -9,7 +9,7 @@ import java.util.List;
 public class ShopItem extends CustomItem {
 
     public ShopItem() {
-        super("Shop", 1, "SHOP");
+        super("Shop", 1, "SHOP",99999);
     }
 
     @Override

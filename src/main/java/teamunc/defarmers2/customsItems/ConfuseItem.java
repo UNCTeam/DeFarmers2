@@ -10,7 +10,7 @@ import java.util.List;
 public class ConfuseItem extends CustomItem {
 
     public ConfuseItem() {
-        super("Confuse", 14, "CONFUSE");
+        super("Confuse", 14, "CONFUSE",1);
     }
 
     @Override

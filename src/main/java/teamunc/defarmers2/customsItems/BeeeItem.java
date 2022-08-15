@@ -10,7 +10,7 @@ import java.util.List;
 public class BeeeItem extends CustomItem {
 
     public BeeeItem() {
-        super("Beee", 9, "BEEE");
+        super("Beee", 9, "BEEE",1);
     }
 
     @Override
