@@ -50,6 +50,9 @@ public class GameManager extends Manager {
         // config
         instance.gameOptions = GameOptions.getInstance();
 
+        // init overworld spawn point
+        Bukkit.getWorlds().get(0).setSpawnLocation(this.gameOptions.getLobbyLocation());
+
         // load save or create if not found
         if (this.getFileManager().fileExists("gameStates")) {
             this.gameStates = this.getFileManager().loadJson("gameStates", GameStates.class);
@@ -142,11 +145,9 @@ public class GameManager extends Manager {
         }
 
         // inform players of items list and price
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(ChatColor.GOLD + "--- Items list: ---");
-            for (String item : this.gameStates.getItemsList().getItemsListWithPrice().keySet()) {
-                player.sendMessage("§a" + item + ": "+ ChatColor.GOLD + this.gameStates.getItemsList().getItemsListWithPrice().get(item));
-            }
+        GameAnnouncer.sendMessageToAllOnlinePlayer(Bukkit.getOnlinePlayers(),ChatColor.GOLD + "--- Items list: ---");
+        for (String item : this.gameStates.getItemsList().getItemsListWithPrice().keySet()) {
+            GameAnnouncer.sendMessageToAllOnlinePlayer(Bukkit.getOnlinePlayers(),"§a" + item + ": "+ ChatColor.GOLD + this.gameStates.getItemsList().getItemsListWithPrice().get(item));
         }
 
         // start tick loop

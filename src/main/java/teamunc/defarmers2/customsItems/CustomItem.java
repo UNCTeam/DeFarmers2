@@ -40,16 +40,6 @@ public abstract class CustomItem extends ItemStack {
 
     protected abstract void onClick(CustomItemParams params);
 
-    public int getCustomDurability() {
-        ItemMeta meta = this.getItemMeta();
-        return meta.getPersistentDataContainer().get(this.customDurabilityKey,PersistentDataType.INTEGER);
-    }
-
-    public void setCustomDurability(int newDurability) {
-        ItemMeta meta = this.getItemMeta();
-        meta.getPersistentDataContainer().set(this.customDurabilityKey, PersistentDataType.INTEGER, newDurability);
-    }
-
     @NotNull
     public abstract List<String> getDescription();
 

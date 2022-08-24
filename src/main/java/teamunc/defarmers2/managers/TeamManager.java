@@ -17,8 +17,6 @@ import teamunc.defarmers2.serializables.GameStates;
 import teamunc.defarmers2.serializables.TeamsStates;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
-import java.lang.reflect.GenericDeclaration;
-import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 public class TeamManager extends Manager{
@@ -270,7 +268,6 @@ public class TeamManager extends Manager{
 
     public void reset() {
         teamsStates.getAllTeams().stream().forEach(team -> teamsStates.resetTeam(team.getName()));
-        teamsStates.setLastScore(0);
     }
 
     public void setupTeams() {
@@ -285,11 +282,6 @@ public class TeamManager extends Manager{
 
         // setup spawn
         setupTeamSpawn();
-
-        // setup classement score
-        teamsStates.setLastScore(0);
-
-
     }
 
     public void calculateMoneyOfTeams() {
@@ -403,7 +395,7 @@ public class TeamManager extends Manager{
             player.setGameMode(GameMode.SPECTATOR);
         }
 
-        GameAnnouncer.announceTitle("§cTeam " + teamName + " is dead !", "", 10, 40, 10);
+        GameAnnouncer.announceLoose(teamName);
 
     }
 
@@ -444,9 +436,9 @@ public class TeamManager extends Manager{
         this.teamsStates.removeCustomMob(name,uuid);
     }
 
-    public void checkIfTeamsDied() {
+    public void setIfTeamsDied() {
         for (Team team : this.getTeams()) {
-            this.checkIfTeamDied(team.getName());
+            this.setIfTeamDied(team.getName());
         }
     }
 
@@ -454,15 +446,8 @@ public class TeamManager extends Manager{
      * check if the team is dead (no more associated mobs in game) and set up it's score according the classement
      * @param name team name
      */
-    public void checkIfTeamDied(String name) {
+    public void setIfTeamDied(String name) {
         if (this.getMobsSpawnedOfTeam(name).size() != 0 || this.isTeamDead(name)) return;
-
-        int classementActuelle = this.teamsStates.getLastScore() + 1;
-        int classementVeritable = this.getTeams().size() - classementActuelle + 1;
-        this.teamsStates.setLastScore(classementActuelle);
-
-        this.setTeamScore(name,classementActuelle);
-
         this.setDeadATeam(name);
     }
 
@@ -470,7 +455,11 @@ public class TeamManager extends Manager{
         return this.teamsStates.getTeamSpawnLocation(name, state);
     }
 
-    public boolean isMoreThanOneTeamAlive() {
+    /**
+     * check if there is a more than one team alive
+     * @return a boolean
+     */
+    public boolean isOneTeamOrLessLeft() {
         int nbTeamAlive = 0;
 
         for (Team team : this.getTeams()) {
@@ -479,17 +468,20 @@ public class TeamManager extends Manager{
             }
         }
 
-        return nbTeamAlive > 1;
+        return nbTeamAlive <= 1;
     }
 
-    public Team getWinnerTeamIfGameOver() {
-        if (!isMoreThanOneTeamAlive()) {
-            for (Team team : this.getTeams()) {
-                if (!this.isTeamDead(team.getName())) {
-                    return team;
-                }
+    public ArrayList<Team> getTeamsNotDead() {
+        ArrayList<Team> teams = new ArrayList<>();
+        for (Team team : this.getTeams()) {
+            if (!this.isTeamDead(team.getName())) {
+                teams.add(team);
             }
         }
-        return null;
+        return teams;
+    }
+
+    public HashMap<Integer,ArrayList<Team>> getClassement() {
+        return this.teamsStates.getClassement();
     }
 }

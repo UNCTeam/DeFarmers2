@@ -11,6 +11,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.persistence.PersistentDataType;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomMobsManager;
+import teamunc.defarmers2.managers.GameAnnouncer;
 import teamunc.defarmers2.mobs.DeFarmersEntityFabric;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
@@ -32,25 +33,25 @@ public class GameCommands extends AbstractCommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("defarmers2")) {
             if (args.length == 0) {
-                plugin.sendMessage(sender,"Defarmers2 Commands:");
-                plugin.sendMessage(sender,"/defarmers2");
-                plugin.sendMessage(sender,"/defarmers2 <start>");
-                plugin.sendMessage(sender,"/defarmers2 <stop>");
-                plugin.sendMessage(sender,"/defarmers2 <reload>");
-                plugin.sendMessage(sender,"/defarmers2 <nextphase>");
-                plugin.sendMessage(sender,"/defarmers2 <test> <(fight)>");
+                GameAnnouncer.sendMessage(sender,"Defarmers2 Commands:");
+                GameAnnouncer.sendMessage(sender,"/defarmers2");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <start>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <stop>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <reload>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <nextphase>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <test> <(fight)>");
             } else {
                 if (args[0].equalsIgnoreCase("start")) {
-                    plugin.sendMessage(sender, "Starting game...");
+                    GameAnnouncer.sendMessage(sender, "Starting game...");
                     plugin.getGameManager().startGame();
                 } else if (args[0].equalsIgnoreCase("stop")) {
-                    plugin.sendMessage(sender, "Stopping game...");
+                    GameAnnouncer.sendMessage(sender, "Stopping game...");
                     plugin.getGameManager().stopGame();
                 } else if (args[0].equalsIgnoreCase("reload")) {
-                    plugin.sendMessage(sender, "Reloading game...");
+                    GameAnnouncer.sendMessage(sender, "Reloading game...");
                     plugin.getGameManager().reloadGame();
                 } else if (args[0].equalsIgnoreCase("nextphase")) {
-                    plugin.sendMessage(sender, "Next phase...");
+                    GameAnnouncer.sendMessage(sender, "Next phase...");
                     plugin.getGameManager().nextPhase();
                 } else if (args[0].equalsIgnoreCase("test")) {
                     if (args.length == 1) {
@@ -77,7 +78,7 @@ public class GameCommands extends AbstractCommandExecutor {
                         }
                     }
                 } else {
-                    plugin.sendMessage(sender,"Invalid command.");
+                    GameAnnouncer.sendMessage(sender,"Invalid command.");
                 }
             }
         }

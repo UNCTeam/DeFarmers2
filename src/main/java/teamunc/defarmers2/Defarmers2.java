@@ -19,8 +19,6 @@ import teamunc.defarmers2.serializables.GameOptions;
 
 public final class Defarmers2 extends JavaPlugin {
 
-    private final String prefix = "§8[§6Defarmers2§8]§r ";
-
     // SINGLETON
     private static Defarmers2 instance = null;
     public static Defarmers2 getInstance() {
@@ -63,16 +61,6 @@ public final class Defarmers2 extends JavaPlugin {
         getCommand("defarmers2").setExecutor(new GameCommands(this));
         getCommand("team").setExecutor(new TeamCommands(this));
 
-    }
-
-    public void sendMessage(CommandSender player, String message) {
-        player.sendMessage(prefix + message);
-    }
-
-    public void broadcastMessage(String message) {
-        for (Player player : getServer().getOnlinePlayers()) {
-            player.sendMessage(prefix + message);
-        }
     }
 
     public GameManager getGameManager() {

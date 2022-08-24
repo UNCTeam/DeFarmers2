@@ -25,7 +25,7 @@ public class UltimateSaverItem extends CustomItem {
         for (Team team : teamManager.getTeams()) {
             for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
                 Mob mob = (Mob) Bukkit.getEntity(uuid);
-                mob.teleport(teamManager.getTeamSpawnLocation(team.getName(), GameStates.GameState.PHASE3).subtract(0, 26, 0));
+                mob.teleport(teamManager.getTeamSpawnLocation(team.getName(), GameStates.GameState.PHASE3).clone().subtract(0, 23, 0));
             }
         }
 

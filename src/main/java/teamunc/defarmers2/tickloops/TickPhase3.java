@@ -2,10 +2,7 @@ package teamunc.defarmers2.tickloops;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
-import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomMobsManager;
 import teamunc.defarmers2.managers.GameAnnouncer;
 import teamunc.defarmers2.managers.TeamManager;
@@ -13,10 +10,7 @@ import teamunc.defarmers2.managers.TickActionsManager;
 import teamunc.defarmers2.serializables.GameStates;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 /**
  * Phase d'action des armées
@@ -37,18 +31,29 @@ public class TickPhase3 extends AbstractTickLoop {
             customMobsManager.updateMobsTargets();
         }
 
-        //check if a team died and if the game is over
-        teamManager.checkIfTeamsDied();
-        if (!teamManager.isMoreThanOneTeamAlive()) {
-            //annouce the winner
-            GameAnnouncer.announceTitle(teamManager.getWinnerTeamIfGameOver().getName() + " a gagné !", "", 10, 20, 10);
+        // update teams death
+        teamManager.setIfTeamsDied();
 
+        //check if a team died and if the game is over
+        if (teamManager.isOneTeamOrLessLeft()) {
             tickActionsManager.nextPhase();
         }
     }
 
     @Override
     public void actionsOnEnd() {
+        TeamManager teamManager = this.plugin.getGameManager().getTeamManager();
+        HashMap<Integer,ArrayList<Team>> teamClassement = teamManager.getClassement();
+
+        // announce winner and check if there is a draw
+        if (teamClassement.get(1).size() == 1) {
+            GameAnnouncer.announceWinner(teamClassement.get(1).get(0));
+        } else {
+            GameAnnouncer.announceDraw(teamClassement.get(1));
+        }
+
+        // annonce classement and scores
+        GameAnnouncer.announceClassement(teamClassement);
 
         // re setuping players
         this.plugin.getGameManager().setupPlayers(true);

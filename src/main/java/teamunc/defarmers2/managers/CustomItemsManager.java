@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class CustomItemsManager extends Manager {
 
     private final NamespacedKey customItemKey = new NamespacedKey(Defarmers2.getInstance(),"customitem");
+    private final NamespacedKey customDurabilityKey = new NamespacedKey(Defarmers2.getInstance(),"customdurability");
 
     // SINGLETON
     private static CustomItemsManager instance;
@@ -69,15 +70,25 @@ public class CustomItemsManager extends Manager {
         String type = this.getCustomType(item.getItemMeta().getPersistentDataContainer());
         if (type == null) return;
 
-        getCustomItem(type).executeOnClick(new CustomItemParams(player));
+        CustomItemParams customItemParams = new CustomItemParams(player);
+        getCustomItem(type).executeOnClick(customItemParams);
 
         // durability
-        this.setCustomDurability(this.getCustomDurability() - params.getDurabilityUsed());
-        if (this.getCustomDurability() <= 0) {
-            this.setAmount(0);
+        this.setCustomDurability(this.getCustomDurability(item) - customItemParams.getDurabilityUsed(), item);
+        if (this.getCustomDurability(item) <= 0) {
+            item.setAmount(0);
         }
     }
 
+    public int getCustomDurability(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        return meta.getPersistentDataContainer().get(this.customDurabilityKey, PersistentDataType.INTEGER);
+    }
+
+    public void setCustomDurability(int newDurability, ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(this.customDurabilityKey, PersistentDataType.INTEGER, newDurability);
+    }
 
     public static CustomItem getCustomItem(String type) {
         // create item from the type and return it from all the custom items

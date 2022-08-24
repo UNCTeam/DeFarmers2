@@ -11,6 +11,7 @@ public class TeamInfo implements Serializable {
     private String teamID;
     private int score;
     private int money;
+    private int classement;
     private boolean isDead;
     private HashMap<String, Integer> artefacts;
     private HashMap<String, Integer> mobs;
@@ -26,6 +27,15 @@ public class TeamInfo implements Serializable {
         this.mobs = mobs;
         this.spawnPerPhase = spawnPerPhase;
         this.customMobsAssociation = customMobsAssociation;
+        this.classement = 0;
+    }
+
+    public int getClassement() {
+        return classement;
+    }
+
+    public void setClassement(int classement) {
+        this.classement = classement;
     }
 
     public void setTeamID(String teamID) {

@@ -8,17 +8,10 @@ import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.managers.CustomItemsManager;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamsStates implements Serializable {
     private final ArrayList<TeamInfo> teamsInfos = new ArrayList<>();
-
-
-    // number of the last team that died in the game (used to determine the winner) (1 = first team dead, 2 = second team dead, etc.)
-    private int lastScore = 0;
 
     /// TEAM MONEY ///
     public void setTeamMoney(String teamID, int money){
@@ -223,11 +216,27 @@ public class TeamsStates implements Serializable {
         }
     }
 
-    /// OTHER ///
-    public int getLastScore() {
-        return lastScore;
+    /// CLASSEMENT ///
+
+    public HashMap<Integer,ArrayList<Team>> getClassement(){
+        HashMap<Integer,ArrayList<Team>> teams = new HashMap<>();
+
+        HashMap<Integer,ArrayList<Team>> teamsByScore = new HashMap<>();
+        for (TeamInfo teamInfo : teamsInfos) {
+            if(!teamsByScore.containsKey(teamInfo.getScore())){
+                teamsByScore.put(teamInfo.getScore(), new ArrayList<>());
+            }
+            teamsByScore.get(teamInfo.getScore()).add(Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamInfo.getTeamID()));
+        }
+
+        ArrayList<Integer> scores = new ArrayList<>(teamsByScore.keySet());
+        scores.sort(Collections.reverseOrder());
+
+        for (int i = 0; i < scores.size(); i++) {
+            teams.put(i+1, teamsByScore.get(scores.get(i)));
+        }
+
+        return teams;
     }
-    public void setLastScore(int number) {
-        this.lastScore = number;
-    }
+
 }

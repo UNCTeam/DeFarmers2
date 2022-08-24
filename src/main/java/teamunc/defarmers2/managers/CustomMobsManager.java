@@ -10,12 +10,12 @@ import org.bukkit.entity.Mob;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.Nullable;
 import teamunc.defarmers2.Defarmers2;
-import teamunc.defarmers2.customsItems.CustomItem;
 import teamunc.defarmers2.mobs.DeFarmersEntityFabric;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -76,8 +76,10 @@ public class CustomMobsManager extends Manager{
         GameManager gameManager = Defarmers2.getInstance().getGameManager();
         TeamManager teamManager = gameManager.getTeamManager();
         GameStates gameStates = gameManager.getGameStates();
+
         for (Team team : teamManager.getTeams()) {
-            for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
+            ArrayList<UUID> mobsSpawnedOfTeam = (ArrayList<UUID>) teamManager.getMobsSpawnedOfTeam(team.getName()).clone();
+            for (UUID uuid : mobsSpawnedOfTeam) {
                 Entity NextTarget = null;
                 Mob mob = (Mob) Bukkit.getEntity(uuid);
 
