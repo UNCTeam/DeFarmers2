@@ -47,14 +47,18 @@ public class GameCommands extends AbstractCommandExecutor {
                         plugin.getGameManager().startGame();
                     } else GameAnnouncer.sendMessage(sender,"Game already started!");
                 } else if (args[0].equalsIgnoreCase("stop")) {
-                    GameAnnouncer.sendMessage(sender, "Stopping game...");
-                    plugin.getGameManager().stopGame();
+                    if (plugin.getGameManager().getGameStates().getState() != GameStates.GameState.WAITING_FOR_PLAYERS) {
+                        GameAnnouncer.sendMessage(sender, "Stopping game...");
+                        plugin.getGameManager().stopGame();
+                    } else GameAnnouncer.sendMessage(sender,"Game already stopped!");
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     GameAnnouncer.sendMessage(sender, "Reloading game...");
                     plugin.getGameManager().reloadGame();
                 } else if (args[0].equalsIgnoreCase("nextphase")) {
-                    GameAnnouncer.sendMessage(sender, "Next phase...");
-                    plugin.getGameManager().nextPhase();
+                    if (plugin.getGameManager().getGameStates().getState() != GameStates.GameState.WAITING_FOR_PLAYERS) {
+                        GameAnnouncer.sendMessage(sender, "Next phase...");
+                        plugin.getGameManager().nextPhase();
+                    } else GameAnnouncer.sendMessage(sender,"Game not started!");
                 } else if (args[0].equalsIgnoreCase("test")) {
                     if (args.length == 1) {
                         if (sender instanceof Player) {
