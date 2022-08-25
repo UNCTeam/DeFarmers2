@@ -1,9 +1,8 @@
 package teamunc.defarmers2.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -15,9 +14,10 @@ import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CustomMobsManager extends Manager{
 
@@ -72,7 +72,7 @@ public class CustomMobsManager extends Manager{
         }
     }
 
-    public void updateMobsTargets() {
+    public void updateMobsInformations() {
         GameManager gameManager = Defarmers2.getInstance().getGameManager();
         TeamManager teamManager = gameManager.getTeamManager();
         GameStates gameStates = gameManager.getGameStates();
@@ -87,6 +87,21 @@ public class CustomMobsManager extends Manager{
                     // main entity is dead
                     removeMobFromTheGame(uuid, team.getName());
                 } else {
+                    // update name
+                    if (!Objects.equals(mob.getCustomName(), "Dinnerbone")) {
+                        StringBuilder newName;
+
+                        long healthPourcent = Math.round((mob.getHealth()/mob.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue())*10);
+                        newName = new StringBuilder(IntStream
+                                .iterate(0, i -> i < healthPourcent, i -> i + 1).mapToObj(i -> "❤")
+                                .collect(Collectors.joining("", ChatColor.valueOf(team.getName()) + "[" + team.getName() + "] ", "")));
+
+                        IntStream.iterate(0, i -> i < 10 - healthPourcent, i -> i + 1).mapToObj(i -> "◼◼").forEach(newName::append);
+
+                        mob.setCustomName(newName.toString());
+                        mob.setCustomNameVisible(true);
+                    }
+                    // update target
                     if (!gameStates.hasMobTargeting(uuid)) {
                         // set a new first target
                         NextTarget = getNearestLivingEntity(null, mob, team.getName());

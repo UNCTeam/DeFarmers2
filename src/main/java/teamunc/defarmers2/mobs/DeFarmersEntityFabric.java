@@ -89,7 +89,7 @@ public class DeFarmersEntityFabric {
         // add it to the spawned Mobs team
         // aply effects
         if (mob != null) {
-            mob.setCustomName(ChatColor.valueOf(teamName) + "[" + teamName + "] " + mob.getName());
+            mob.setCustomName(ChatColor.valueOf(teamName) + "[" + teamName + "] " + "❤❤❤❤❤❤❤❤❤❤");
             mob.setCustomNameVisible(true);
             mob.setPersistent(true);
             Defarmers2.getInstance().getGameManager().getTeamManager().addMobsSpawnedOfTeam(teamName, mob.getUniqueId());

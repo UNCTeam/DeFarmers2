@@ -21,7 +21,7 @@ public class TickPhase1 extends AbstractTickLoop {
         this.plugin.getGameManager().getTeamManager().calculateMoneyOfTeams();
 
         // re setuping players
-        this.plugin.getGameManager().setupPlayers(true);
+        this.plugin.getGameManager().setupPlayers(true,false);
 
         // giving players shop item
         this.plugin.getGameManager().getTeamManager().giveShopItem();

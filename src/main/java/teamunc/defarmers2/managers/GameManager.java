@@ -122,7 +122,7 @@ public class GameManager extends Manager {
         // setting up phase 3 area
         ApiWorldEdit.managePhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()}, true);
 
-        setupPlayers(false);
+        setupPlayers(false, false);
 
         // apply resistance to all player
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -178,7 +178,7 @@ public class GameManager extends Manager {
             DeleteAllScoreboard();
 
             // re setuping players
-            this.setupPlayers(true);
+            this.setupPlayers(true, false);
 
             // teleport players to lobby
             this.teleportPlayers(GameStates.GameState.WAITING_FOR_PLAYERS);
@@ -197,7 +197,7 @@ public class GameManager extends Manager {
     /**
      * apply various effects to players
      */
-    public void setupPlayers(boolean invulnerable) {
+    public void setupPlayers(boolean invulnerable, boolean flying) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
                 player.setFoodLevel(20);
@@ -205,6 +205,8 @@ public class GameManager extends Manager {
                 player.setFireTicks(0);
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setInvulnerable(invulnerable);
+                player.setAllowFlight(flying);
+                player.setFlying(flying);
                 player.setExp(0);
                 player.setLevel(0);
                 player.getInventory().clear();

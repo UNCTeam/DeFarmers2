@@ -28,7 +28,7 @@ public class TickPhase3 extends AbstractTickLoop {
         TickActionsManager tickActionsManager = this.plugin.getGameManager().getTickActionsManager();
 
         if ((tickActionsManager.getSecondLeft() % 2) == 0) {
-            customMobsManager.updateMobsTargets();
+            customMobsManager.updateMobsInformations();
         }
 
         // update teams death
@@ -56,7 +56,7 @@ public class TickPhase3 extends AbstractTickLoop {
         GameAnnouncer.announceClassement(teamClassement);
 
         // re setuping players
-        this.plugin.getGameManager().setupPlayers(true);
+        this.plugin.getGameManager().setupPlayers(true, false);
 
         // clearing mobs and setting peaceful difficulty
         Bukkit.getWorlds().get(0).setDifficulty(Difficulty.PEACEFUL);

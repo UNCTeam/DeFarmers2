@@ -121,7 +121,7 @@ public class ApiWorldEdit {
             // create a region of 50 50 50 blocks
             for (int i = -26; i <= 26; i++) {
                 for (int j = -26; j <= 26; j++) {
-                    for (int k = -51; k <= 2; k++) {
+                    for (int k = -51; k <= 9; k++) {
                         Block blockCloned = location.clone().add(i, k, j).getBlock();
                         if (blockCloned.getType() != Material.AIR)
                             blockCloned.setType(Material.AIR);
