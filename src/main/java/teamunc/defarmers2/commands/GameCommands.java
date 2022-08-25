@@ -42,8 +42,10 @@ public class GameCommands extends AbstractCommandExecutor {
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <test> <(fight)>");
             } else {
                 if (args[0].equalsIgnoreCase("start")) {
-                    GameAnnouncer.sendMessage(sender, "Starting game...");
-                    plugin.getGameManager().startGame();
+                    if (plugin.getGameManager().getGameStates().getState() == GameStates.GameState.WAITING_FOR_PLAYERS) {
+                        GameAnnouncer.sendMessage(sender, "Starting game...");
+                        plugin.getGameManager().startGame();
+                    } else GameAnnouncer.sendMessage(sender,"Game already started!");
                 } else if (args[0].equalsIgnoreCase("stop")) {
                     GameAnnouncer.sendMessage(sender, "Stopping game...");
                     plugin.getGameManager().stopGame();
