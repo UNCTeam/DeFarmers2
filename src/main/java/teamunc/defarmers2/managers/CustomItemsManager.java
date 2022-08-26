@@ -12,6 +12,7 @@ import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.serializables.GameOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CustomItemsManager extends Manager {
 
@@ -71,13 +72,32 @@ public class CustomItemsManager extends Manager {
         if (type == null) return;
 
         CustomItemParams customItemParams = new CustomItemParams(player);
-        getCustomItem(type).executeOnClick(customItemParams);
+        CustomItem customItem = getCustomItem(type);
+        customItem.executeOnClick(customItemParams);
 
         // durability
         this.setCustomDurability(this.getCustomDurability(item) - customItemParams.getDurabilityUsed(), item);
         if (this.getCustomDurability(item) <= 0) {
             item.setAmount(0);
         }
+
+        // actualise lore
+        actualiseLore(item);
+    }
+
+    public void actualiseLore(ItemStack item) {
+
+        ItemMeta itemMeta = item.getItemMeta();
+        String type = this.getCustomType(itemMeta.getPersistentDataContainer());
+        CustomItem customItem = getCustomItem(type);
+
+        if (!type.equals("SHOP")) {
+            ArrayList<String> description = new ArrayList<>(customItem.getDescription());
+
+            description.add("§7Durability: " + this.getCustomDurability(item));
+            itemMeta.setLore(description);
+        }
+        item.setItemMeta(itemMeta);
     }
 
     public int getCustomDurability(ItemStack item) {
@@ -88,6 +108,7 @@ public class CustomItemsManager extends Manager {
     public void setCustomDurability(int newDurability, ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         meta.getPersistentDataContainer().set(this.customDurabilityKey, PersistentDataType.INTEGER, newDurability);
+        item.setItemMeta(meta);
     }
 
     public static CustomItem getCustomItem(String type) {

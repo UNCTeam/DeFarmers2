@@ -6,9 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import teamunc.defarmers2.Defarmers2;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +27,16 @@ public abstract class CustomItem extends ItemStack {
         PersistentDataContainer data = meta.getPersistentDataContainer();
         data.set(this.customItemKey, PersistentDataType.STRING,type);
         data.set(this.customDurabilityKey, PersistentDataType.INTEGER, durability);
-        this.setItemMeta(meta);
 
+        // description
+        if (!type.equals("SHOP")) {
+            ArrayList<String> description = new ArrayList<>(this.getDescription());
+
+            description.add("§7Durability: " + durability);
+            meta.setLore(description);
+        }
+
+        this.setItemMeta(meta);
     }
     public String getCustomType() {
         return Objects.requireNonNull(this.getItemMeta()).getPersistentDataContainer().get(this.customItemKey,PersistentDataType.STRING);
@@ -40,7 +48,6 @@ public abstract class CustomItem extends ItemStack {
 
     protected abstract void onClick(CustomItemParams params);
 
-    @NotNull
     public abstract List<String> getDescription();
 
     public abstract int getDefaultPrice();
