@@ -18,8 +18,8 @@ public class MeteoriteItem extends CustomItem {
     @Override
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
-
-        Location location = MathsUtils.getRandomLocation(player.getLocation(), 10).subtract(0, 26, 0);
+        GameManager gameManager = DeFarmers2.getInstance().getGameManager();
+        Location location = MathsUtils.getRandomLocation(player.getLocation(), 10).setY(gameManager.getGameOption());
 
         location.getWorld().createExplosion(location, 8F, false);
 
