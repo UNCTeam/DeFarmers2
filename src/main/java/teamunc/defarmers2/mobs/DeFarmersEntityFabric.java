@@ -32,7 +32,7 @@ public class DeFarmersEntityFabric {
 
         // create a new random location within the radius
         Location randomLocation = MathsUtils.getRandomLocation(location, radius);
-
+        randomLocation.subtract(0, 3, 0);
         try {
             switch (type) {
                 case ZOMBIE:

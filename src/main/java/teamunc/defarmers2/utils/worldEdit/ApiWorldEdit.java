@@ -50,7 +50,7 @@ public class ApiWorldEdit {
         if (setup) {
             setupArea(copy, "phase1");
         } else {
-            resetArea(locations);
+            resetAreaPhase1(locations);
         }
     }
 
@@ -60,7 +60,7 @@ public class ApiWorldEdit {
         if (setup) {
             setupArea(locations, "phase2");
         } else {
-            resetArea(locations);
+            resetAreaPhase2(locations);
         }
     }
 
@@ -68,17 +68,7 @@ public class ApiWorldEdit {
         if (setup) {
             setupArea(locations, "phase3");
         } else {
-            ArrayList<Location> locations2 = new ArrayList<>();
-            locations2.add(locations[0].clone().add(0,0, 0));
-            locations2.add(locations2.get(0).clone().add(50, 0, 50));
-            locations2.add(locations2.get(0).clone().add(0, 0, 50));
-            locations2.add(locations2.get(0).clone().add(50, 0, 0));
-            locations2.add(locations2.get(0).clone().add(0, 0, -50));
-            locations2.add(locations2.get(0).clone().add(-50, 0, 0));
-            locations2.add(locations2.get(0).clone().add(-50, 0, -50));
-            locations2.add(locations2.get(0).clone().add(50, 0, -50));
-            locations2.add(locations2.get(0).clone().add(-50, 0, 50));
-            resetArea(locations2.toArray(new Location[locations.length]));
+            resetAreaPhase3(locations[0]);
         }
     }
 
@@ -115,13 +105,12 @@ public class ApiWorldEdit {
         }
     }
 
-    private static void resetArea(Location[] locations) {
+    private static void resetAreaPhase1(Location[] locations) {
 
         for (Location location : locations) {
-            // create a region of 50 50 50 blocks
             for (int i = -26; i <= 26; i++) {
                 for (int j = -26; j <= 26; j++) {
-                    for (int k = -51; k <= 9; k++) {
+                    for (int k = -101; k <= 2; k++) {
                         Block blockCloned = location.clone().add(i, k, j).getBlock();
                         if (blockCloned.getType() != Material.AIR)
                             blockCloned.setType(Material.AIR);
@@ -130,6 +119,34 @@ public class ApiWorldEdit {
             }
         }
     }
+
+    private static void resetAreaPhase2(Location[] locations) {
+
+        for (Location location : locations) {
+            for (int i = -16; i <= 16; i++) {
+                for (int j = -16; j <= 16; j++) {
+                    for (int k = -15; k <= 15; k++) {
+                        Block blockCloned = location.clone().add(i, k, j).getBlock();
+                        if (blockCloned.getType() != Material.AIR)
+                            blockCloned.setType(Material.AIR);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void resetAreaPhase3(Location location) {
+        for (int i = -62; i <= 62; i++) {
+            for (int j = -62; j <= 62; j++) {
+                for (int k = -14; k <= 50; k++) {
+                    Block blockCloned = location.clone().add(i, k, j).getBlock();
+                    if (blockCloned.getType() != Material.AIR)
+                        blockCloned.setType(Material.AIR);
+                }
+            }
+        }
+    }
+
 
     public static void setupItemsList(String fileName) {
         Defarmers2 plugin = Defarmers2.getInstance();

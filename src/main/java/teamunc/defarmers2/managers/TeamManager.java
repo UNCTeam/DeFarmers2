@@ -341,7 +341,7 @@ public class TeamManager extends Manager{
                 for (CustomItem artefact : artefacts) {
                     int random = new Random().nextInt(team.getEntries().size());
                     Player player = getPlayersInTeamOnline(team.getName()).get(random);
-                    player.getInventory().addItem(artefact);
+                    player.getInventory().setItem(player.getInventory().firstEmpty(), artefact);
                 }
             }
         }

@@ -16,7 +16,7 @@ public class ItemsEvents extends AbstractListener {
     @EventHandler
     public void onItemUsed(PlayerInteractEvent e) {
 
-        if (e.getAction() == Action.RIGHT_CLICK_AIR) {
+        if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // variables
             ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
             Player player = e.getPlayer();
