@@ -21,8 +21,8 @@ public class DeFarmersEntityFabric {
         return instance;
     }
 
-    public Mob createDeFarmersMob(DeFarmersEntityType type, String teamName, GameStates.GameState phase, int radius) {
-        Location location = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamStates().getTeamSpawnLocation(teamName, phase);
+    public Mob createDeFarmersMob(DeFarmersEntityType type, String teamName, GameStates.GameState phase, int radius, Location location) {
+        if (location == null) location = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamStates().getTeamSpawnLocation(teamName, phase);
         Mob mob = null;
 
         if (location == null || location.getWorld() == null) {
@@ -32,7 +32,7 @@ public class DeFarmersEntityFabric {
 
         // create a new random location within the radius
         Location randomLocation = MathsUtils.getRandomLocation(location, radius);
-        randomLocation.setY(location.getY() - 26);
+
         try {
             switch (type) {
                 case ZOMBIE:

@@ -79,10 +79,10 @@ public class CustomItemsManager extends Manager {
         this.setCustomDurability(this.getCustomDurability(item) - customItemParams.getDurabilityUsed(), item);
         if (this.getCustomDurability(item) <= 0) {
             item.setAmount(0);
+        } else {
+            // actualise lore
+            actualiseLore(item);
         }
-
-        // actualise lore
-        actualiseLore(item);
     }
 
     public void actualiseLore(ItemStack item) {

@@ -1,5 +1,6 @@
 package teamunc.defarmers2.customsItems;
 
+import com.sk89q.worldedit.util.Direction;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.mobs.DeFarmersEntityFabric;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
+import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class SuperMobItem extends CustomItem {
         TeamManager teamManager = TeamManager.getInstance();
         Team team = teamManager.getTeamOfPlayer(player);
         DeFarmersEntityFabric deFarmersEntityFabric = DeFarmersEntityFabric.getInstance();
-        Mob mob = deFarmersEntityFabric.createDeFarmersMob(DeFarmersEntityType.ZOMBIE, team.getName(), GameStates.GameState.PHASE3, 1);
+        Mob mob = deFarmersEntityFabric.createDeFarmersMob(DeFarmersEntityType.ZOMBIE, team.getName(), GameStates.GameState.PHASE3, 1, MathsUtils.getNextLocation(Direction.DOWN,player.getLocation(), 32,null).add(0,1,0));
         mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 6));
         mob.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
     }

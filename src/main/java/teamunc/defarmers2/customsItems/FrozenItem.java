@@ -1,9 +1,17 @@
 package teamunc.defarmers2.customsItems;
 
-import org.bukkit.Bukkit;
+import com.sk89q.worldedit.util.Direction;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
+import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
 import java.util.List;
 
@@ -17,9 +25,15 @@ public class FrozenItem extends CustomItem {
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
 
-        Inventory inv = Bukkit.createInventory(null, 54, "Buy Menu");
+        ItemStack potion = new ItemStack(Material.LINGERING_POTION);
+        PotionMeta meta = (PotionMeta) potion.getItemMeta();
+        meta.addCustomEffect(new PotionEffect(PotionEffectType.SLOW, 5*20, 2), true);
+        potion.setItemMeta(meta);
 
-        player.openInventory(inv);
+        Location location = MathsUtils.getNextLocation(Direction.DOWN, player.getLocation(), 32, null);
+
+        ThrownPotion thrownPotion = (ThrownPotion) player.getWorld().spawnEntity(location, EntityType.SPLASH_POTION);
+        thrownPotion.setItem(potion);
     }
     @Override
     public @NotNull List<String> getDescription() {

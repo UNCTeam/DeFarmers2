@@ -35,8 +35,8 @@ public class GameOptions {
 
         config.addDefault("lobbyLocation", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));
 
-        config.addDefault("phase1LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 230, 0));
-        config.addDefault("phase2LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 100, 0));
+        config.addDefault("phase1LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 300, 0));
+        config.addDefault("phase2LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 40, 0));
         config.addDefault("phase3LocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 0, 0));
 
         config.addDefault("endGameLocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));

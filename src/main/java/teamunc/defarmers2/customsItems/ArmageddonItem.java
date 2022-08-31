@@ -22,8 +22,9 @@ public class ArmageddonItem extends CustomItem {
     public void onClick(CustomItemParams params) {
         Random r = new Random();
         int random = r.nextInt(4) + 5;
+        GameManager gameManager = GameManager.getInstance();
 
-        Location locCenter = GameManager.getInstance().getPhaseSpawn(GameStates.GameState.PHASE3).clone().subtract(0,26,0);
+        Location locCenter = gameManager.getPhaseSpawn(GameStates.GameState.PHASE3).clone();
 
         for (int i = 0; i < random; i++) {
             Location locRdm = MathsUtils.getRandomLocation(locCenter, 55);

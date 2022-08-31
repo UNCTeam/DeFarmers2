@@ -42,7 +42,7 @@ public enum DeFarmersEntityType {
 
     public static DeFarmersEntityType getByName(String name) {
         for (DeFarmersEntityType type : DeFarmersEntityType.values()) {
-            if (type.name.equalsIgnoreCase(name)) {
+            if (type.name.equalsIgnoreCase(name) || type.toString().equalsIgnoreCase(name)) {
                 return type;
             }
         }

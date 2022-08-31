@@ -1,6 +1,9 @@
 package teamunc.defarmers2.utils.worldEdit;
 
+import com.sk89q.worldedit.util.Direction;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 public class MathsUtils {
     public static double distance(Location loc1, Location loc2) {
@@ -25,5 +28,41 @@ public class MathsUtils {
         randomLocation.setX(randomLocation.getX() + (Math.random() * radius * 2) - radius);
         randomLocation.setZ(randomLocation.getZ() + (Math.random() * radius * 2) - radius);
         return randomLocation;
+    }
+
+    /**
+     * give the next location in the direction if encounter a specific material
+     * if material is null, return the next not air block
+     */
+    public static Location getNextLocation(Direction direction, Location location, int max, @Nullable Material material) {
+        Location nextLocation = location.clone();
+        switch (direction) {
+            case NORTH:
+                nextLocation.setZ(nextLocation.getZ() + 1);
+                break;
+            case SOUTH:
+                nextLocation.setZ(nextLocation.getZ() - 1);
+                break;
+            case EAST:
+                nextLocation.setX(nextLocation.getX() + 1);
+                break;
+            case WEST:
+                nextLocation.setX(nextLocation.getX() - 1);
+                break;
+            case UP:
+                nextLocation.setY(nextLocation.getY() + 1);
+                break;
+            case DOWN:
+                nextLocation.setY(nextLocation.getY() - 1);
+                break;
+        }
+        if (material == null && nextLocation.getBlock().getType() != Material.AIR) {
+            return nextLocation;
+        } else if (nextLocation.getBlock().getType() == material) {
+            return nextLocation;
+        } else if (max == 0) {
+            return null;
+        }
+        return getNextLocation(direction, nextLocation, max - 1, material);
     }
 }

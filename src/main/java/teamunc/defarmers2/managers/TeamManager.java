@@ -234,7 +234,7 @@ public class TeamManager extends Manager{
         }
 
         // phase 3
-        Location center3 = this.plugin.getGameManager().getPhaseSpawn(GameStates.GameState.PHASE3).clone().subtract(0, 5, 0);
+        Location center3 = this.plugin.getGameManager().getPhaseSpawn(GameStates.GameState.PHASE3).clone().add(0, 5, 0);
         int radius3 = 40;
         Location[] locations3 = MathsUtils.getCircle(center3, radius3, nbTeam);
 

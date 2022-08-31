@@ -66,7 +66,7 @@ public class CustomMobsManager extends Manager{
         for (Team team : teamManager.getTeams()) {
             for (String key : teamManager.getSelectedTeamsMobs(team).keySet()) {
                 for (int i = 0; i < teamManager.getSelectedTeamsMobs(team).get(key); i++) {
-                    entityFabric.createDeFarmersMob(DeFarmersEntityType.getByName(key), team.getName(), GameStates.GameState.PHASE3, 5);
+                    entityFabric.createDeFarmersMob(DeFarmersEntityType.getByName(key), team.getName(), GameStates.GameState.PHASE3, 5, null);
                 }
             }
         }
