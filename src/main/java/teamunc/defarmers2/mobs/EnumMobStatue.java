@@ -2,10 +2,11 @@ package teamunc.defarmers2.mobs;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.entity.*;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomMobsManager;
 import teamunc.defarmers2.managers.GameManager;
@@ -31,8 +32,10 @@ public enum EnumMobStatue implements Serializable {
                 this.actionConfuse(mobs);
                 break;
             case BEEE_EVIL:
+                this.actionBeeeEvil(mobs);
                 break;
             case BEEE:
+                this.actionBeee(mobs);
                 break;
             case FOLLOWING_PLAYER:
                 actionFollowingPlayer(mobs);
@@ -47,8 +50,10 @@ public enum EnumMobStatue implements Serializable {
                 this.initConfuse(mobs);
                 break;
             case BEEE_EVIL:
+                this.initBeeeEvil(mobs);
                 break;
             case BEEE:
+                this.initBeee(mobs);
                 break;
             case FOLLOWING_PLAYER:
                 initFollowingPlayer(mobs);
@@ -62,8 +67,10 @@ public enum EnumMobStatue implements Serializable {
                 this.endConfuse(mobs);
                 break;
             case BEEE_EVIL:
+                this.endBeeeEvil(mobs);
                 break;
             case BEEE:
+                this.endBeee(mobs);
                 break;
             case FOLLOWING_PLAYER:
                 endFollowingPlayer(mobs);
@@ -188,6 +195,108 @@ public enum EnumMobStatue implements Serializable {
                     // reset target
                     gameStates.setMobTargeting(uuid, null);
                 }
+            }
+        }
+    }
+
+    /// BEEEEE ///
+    private void actionBeee(ArrayList<UUID> mobs) {
+        // No.
+    }
+    private void initBeee(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                gameStates.removeAllAgressor(uuid);
+                gameStates.addMobUntouchable(uuid);
+                mob.setAI(false);
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 1, false, false));
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 999999, 100, false, false));
+
+                LivingEntity sheep = mob.getLocation().getWorld().spawn(mob.getLocation(), Sheep.class);
+                sheep.setAI(false);
+            }
+        }
+    }
+    private void endBeee(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                gameStates.removeMobUntouchable(uuid);
+                mob.setAI(true);
+                mob.removePotionEffect(PotionEffectType.INVISIBILITY);
+                mob.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+
+                mob.getLocation().getWorld().getNearbyEntities(mob.getLocation(),2,2,2).forEach(entity -> {
+                    if (entity instanceof Sheep) {
+                        entity.remove();
+                    }
+                });
+
+                gameStates.setMobTargeting(uuid, null);
+                mob.setTarget(null);
+            }
+        }
+    }
+
+    /// BEEEEE EVIL ///
+    private void actionBeeeEvil(ArrayList<UUID> mobs) {
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                mob.getLocation().getWorld().getNearbyEntities(mob.getLocation(),2,6,2).forEach(entity -> {
+                    if (entity instanceof Sheep) {
+                        entity.getLocation().setYaw(mob.getLocation().getYaw()+10);
+                    }
+                });
+            }
+        }
+    }
+
+    private void initBeeeEvil(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                gameStates.removeAllAgressor(uuid);
+                gameStates.addMobUntouchable(uuid);
+                mob.setAI(false);
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 999999, 100, false, false));
+
+                Sheep sheep = mob.getLocation().getWorld().spawn(mob.getLocation().clone().add(0,3,0), Sheep.class);
+                sheep.setAI(false);
+                sheep.setColor(DyeColor.RED);
+            }
+        }
+    }
+    private void endBeeeEvil(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                gameStates.removeMobUntouchable(uuid);
+                mob.setAI(true);
+                mob.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+
+                mob.getLocation().getWorld().getNearbyEntities(mob.getLocation(),2,6,2).forEach(entity -> {
+                    if (entity instanceof Sheep) {
+                        entity.remove();
+                    }
+                });
+
+                gameStates.setMobTargeting(uuid, null);
+                mob.setTarget(null);
             }
         }
     }

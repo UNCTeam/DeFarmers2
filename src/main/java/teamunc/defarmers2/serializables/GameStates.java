@@ -3,7 +3,9 @@ package teamunc.defarmers2.serializables;
 import teamunc.defarmers2.utils.worldEdit.InGameItemsList;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 public class GameStates implements Serializable {
@@ -37,12 +39,14 @@ public class GameStates implements Serializable {
 	private GameState state;
 	private InGameItemsList itemsList;
 	private HashMap<UUID,UUID> mobsTargeting;
+	private ArrayList<UUID> mobsUntouchable;
 	private int timeLeftInThisPhase;
 	public GameStates() {
 		state = GameState.WAITING_FOR_PLAYERS;
 		itemsList = null;
 		timeLeftInThisPhase = -1;
 		mobsTargeting = new HashMap<>();
+		mobsUntouchable = new ArrayList<>();
 	}
 
 	public GameState getState() {
@@ -57,6 +61,8 @@ public class GameStates implements Serializable {
 		state = GameState.WAITING_FOR_PLAYERS;
 		itemsList = null;
 		timeLeftInThisPhase = -1;
+		mobsTargeting = new HashMap<>();
+		mobsUntouchable = new ArrayList<>();
 	}
 
 	public int getTimeLeftInThisPhase() {
@@ -94,5 +100,32 @@ public class GameStates implements Serializable {
 	public void setMobTargeting(UUID mob, UUID target) {
 		if (target == null) mobsTargeting.remove(mob);
 		else mobsTargeting.put(mob, target);
+	}
+
+	public ArrayList<UUID> getAllAgressor(UUID mob) {
+		ArrayList<UUID> agressors = new ArrayList<>();
+		for (UUID uuid : mobsTargeting.keySet()) {
+			if (mobsTargeting.get(uuid).equals(mob)) agressors.add(uuid);
+		}
+		return agressors;
+	}
+
+	public void removeAllAgressor(UUID mob) {
+		ArrayList<UUID> uuids = new ArrayList<>(mobsTargeting.keySet());
+		for (UUID uuid : uuids) {
+			if (mobsTargeting.get(uuid).equals(mob)) mobsTargeting.remove(uuid);
+		}
+	}
+
+	public ArrayList<UUID> getMobsUntouchable() {
+		return mobsUntouchable;
+	}
+
+	public void addMobUntouchable(UUID mob) {
+		mobsUntouchable.add(mob);
+	}
+
+	public void removeMobUntouchable(UUID mob) {
+		mobsUntouchable.remove(mob);
 	}
 }

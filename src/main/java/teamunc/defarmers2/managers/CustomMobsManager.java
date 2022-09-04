@@ -105,7 +105,12 @@ public class CustomMobsManager extends Manager{
                     if (!gameStates.hasMobTargeting(uuid)) {
                         // set a new first target
                         nextTarget = getNearestLivingEntity(null, mob, team.getName());
-                        gameStates.setMobTargeting(uuid, nextTarget.getUniqueId());
+                        if (nextTarget != null) {
+                            gameStates.setMobTargeting(uuid, nextTarget.getUniqueId());
+                        } else {
+                            gameStates.setMobTargeting(uuid, null);
+                            mob.setTarget(null);
+                        }
                     } else {
                         UUID targetedUuid = gameStates.getMobTargeting(uuid);
                         Entity targetedEntity = Bukkit.getEntity(targetedUuid);
@@ -175,6 +180,7 @@ public class CustomMobsManager extends Manager{
     @Nullable
     public Mob getNearestLivingEntity(ArrayList<UUID> mobsTargetedTeam, Mob mob, String teamName) {
         TeamManager teamManager = this.plugin.getGameManager().getTeamManager();
+        GameStates gameStates = this.plugin.getGameManager().getGameStates();
 
         // if there is no mob in the list, return the nearest mob of the list of mobs in other teams
         // if teamName is null then take any nearest mobs
@@ -194,7 +200,7 @@ public class CustomMobsManager extends Manager{
             double distance = Double.MAX_VALUE;
             for (UUID uuid : mobsTargetedTeam) {
                 Entity entity = Bukkit.getEntity(uuid);
-                if (entity instanceof Mob && !mob.getUniqueId().equals(uuid)) {
+                if (entity instanceof Mob && !mob.getUniqueId().equals(uuid) && !gameStates.getMobsUntouchable().contains(uuid)) {
                     Mob mobTargeted = (Mob) entity;
                     double newDistance = mob.getLocation().distance(mobTargeted.getLocation());
                     if (newDistance < distance) {
@@ -206,10 +212,6 @@ public class CustomMobsManager extends Manager{
         }
 
         return nearestMob;
-    }
-
-    public UUID getTargetUUID(String name, Mob mob) {
-        return null;
     }
 
     public void clearMobs() {

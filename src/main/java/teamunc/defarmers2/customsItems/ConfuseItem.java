@@ -25,6 +25,7 @@ public class ConfuseItem extends CustomItem {
     @Override
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
+        TeamManager teamManager = TeamManager.getInstance();
 
         Location location = MathsUtils.getNextLocation(Direction.DOWN, player.getLocation(), 64, null);
         if (location != null) {
@@ -32,7 +33,7 @@ public class ConfuseItem extends CustomItem {
             Collection<Entity> entities = location.getWorld().getNearbyEntities(location, 15, 15, 15);
             ArrayList<UUID> mobs = new ArrayList<>();
             for (Entity entity : entities) {
-                if (entity instanceof Mob) {
+                if (entity instanceof Mob && teamManager.getAllSpawnedMobsOfAllTeams().contains(entity.getUniqueId())) {
                     mobs.add(entity.getUniqueId());
                     break;
                 }
