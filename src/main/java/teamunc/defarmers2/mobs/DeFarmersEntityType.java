@@ -15,16 +15,14 @@ public enum DeFarmersEntityType {
     CAVE_SPIDER("CaveSpider", 4),
     CREEPER("Creeper", 5),
     ENDERMAN("Enderman", 6),
-    GHAST("Ghast", 7),
-    PIG_ZOMBIE("PigZombie", 8),
-    SLIME("Slime", 9),
-    WITCH("Witch", 10),
+    FOX("Fox", 17),
+    ZOMBIFIED_PIGLIN("ZombifiedPiglin", 8),
+    CAT("Cat", 16),
+    RAVAGER("Ravager", 19),
     WOLF("Wolf", 11),
-    BLAZE("Blaze", 12),
-    CAVE_SPIDER_JOCKEY("CaveSpiderJockey", 13),
-    ENDERMITE("Endermite", 14),
-    MAGMA_CUBE("MagmaCube", 15)
-
+    ENDERMITE("Endermite", 12),
+    EVOKER("Evoker", 18),
+    POLAR_BEAR("PolarBear", 20),
     ;
 
 
@@ -42,7 +40,7 @@ public enum DeFarmersEntityType {
 
     public static DeFarmersEntityType getByName(String name) {
         for (DeFarmersEntityType type : DeFarmersEntityType.values()) {
-            if (type.name.equalsIgnoreCase(name) || type.toString().equalsIgnoreCase(name)) {
+            if (type.name.equalsIgnoreCase(name) || type.name().equalsIgnoreCase(name)) {
                 return type;
             }
         }

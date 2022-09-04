@@ -1,6 +1,7 @@
 package teamunc.defarmers2.customsItems.ui_menu_Items;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,9 +62,9 @@ public class ShopInventory implements Listener {
     // You can open the inventory with this
     public void openInventory(final HumanEntity ent) {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
-        Inventory inv = Bukkit.createInventory(new ShopHolder(), 54, "Buy Menu");
+        Inventory inv = Bukkit.createInventory(new ShopHolder(), 54, ChatColor.WHITE + "\uF80B섥");
         ent.openInventory(inv);
-        Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer((Player) ent);
+        Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer(ent.getName());
         initializeItems(inv, team);
     }
 
@@ -81,7 +82,7 @@ public class ShopInventory implements Listener {
         if (clickedItem == null || clickedItem.getType().isAir()) return;
 
         // create a new custom ui item from the clicked item just to buy it and update lore
-        final Team team = TeamManager.getInstance().getTeamOfPlayer(p);
+        final Team team = TeamManager.getInstance().getTeamOfPlayer(p.getName());
         CustomUIItem item = new CustomUIItem(clickedItem,team);
 
         Defarmers2.getInstance().getGameManager().getTeamManager().buy(team,item);

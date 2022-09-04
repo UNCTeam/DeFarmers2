@@ -1,9 +1,13 @@
 package teamunc.defarmers2.mobs;
 
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zombie;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.customsItems.CustomItem;
 import teamunc.defarmers2.serializables.GameStates;
@@ -37,9 +41,15 @@ public class DeFarmersEntityFabric {
             switch (type) {
                 case ZOMBIE:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Zombie.class);
+                    ((Zombie) mob).setAdult();
+                    mob.getEquipment().clear();
                     break;
                 case SKELETON:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Skeleton.class);
+                    mob.getEquipment().setChestplate(null);
+                    mob.getEquipment().setLeggings(null);
+                    mob.getEquipment().setHelmet(null);
+                    mob.getEquipment().setBoots(null);
                     break;
                 case SPIDER:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Spider.class);
@@ -53,33 +63,35 @@ public class DeFarmersEntityFabric {
                 case ENDERMAN:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Enderman.class);
                     break;
-                case GHAST:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Ghast.class);
-                    break;
-                case PIG_ZOMBIE:
+                case ZOMBIFIED_PIGLIN:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.PigZombie.class);
-                    break;
-                case SLIME:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Slime.class);
-                    break;
-                case WITCH:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Witch.class);
+                    mob.getEquipment().setChestplate(null);
+                    mob.getEquipment().setLeggings(null);
+                    mob.getEquipment().setHelmet(null);
+                    mob.getEquipment().setBoots(null);
                     break;
                 case WOLF:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Wolf.class);
+                    ((Wolf) mob).setCollarColor(DyeColor.valueOf(teamName));
+                    mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getBaseValue() * 2);
                     break;
-                case BLAZE:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Blaze.class);
+                case EVOKER:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Evoker.class);
                     break;
-                case CAVE_SPIDER_JOCKEY:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.CaveSpider.class);
-                    mob.addPassenger(location.getWorld().spawn(randomLocation, org.bukkit.entity.Skeleton.class));
+                case FOX:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Fox.class);
+                    break;
+                case CAT:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Cat.class);
+                    break;
+                case RAVAGER:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Ravager.class);
+                    break;
+                case POLAR_BEAR:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.PolarBear.class);
                     break;
                 case ENDERMITE:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Endermite.class);
-                    break;
-                case MAGMA_CUBE:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.MagmaCube.class);
                     break;
             }
         } catch (Exception e) {
@@ -90,6 +102,7 @@ public class DeFarmersEntityFabric {
         // aply effects
         if (mob != null) {
             mob.setCustomName(ChatColor.valueOf(teamName) + "[" + teamName + "] " + "❤❤❤❤❤❤❤❤❤❤");
+            mob.getActivePotionEffects().clear();
             mob.setCustomNameVisible(true);
             mob.setPersistent(true);
             Defarmers2.getInstance().getGameManager().getTeamManager().addMobsSpawnedOfTeam(teamName, mob.getUniqueId());

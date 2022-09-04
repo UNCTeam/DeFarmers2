@@ -25,7 +25,7 @@ public class FocusItem extends CustomItem {
         Player player = params.getPlayer();
 
         TeamChooserInventory.getInstance().openInventory(player, (p,teamName) -> {
-            Team team1 = teamManager.getTeamOfPlayer(p);
+            Team team1 = teamManager.getTeamOfPlayer(p.getName());
             Team team2 = teamManager.getTeam(teamName);
             customMobsManager.focusOnATeam(team1,team2);
         });

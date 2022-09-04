@@ -25,7 +25,7 @@ public class InGameInfoScoreboard extends VScoreboard{
         ArrayList<String> lines = new ArrayList<>();
         Defarmers2 plugin = Defarmers2.getInstance();
         GameManager gameManager = plugin.getGameManager();
-        Team team = gameManager.getTeamManager().getTeamOfPlayer(this.getPlayer());
+        Team team = gameManager.getTeamManager().getTeamOfPlayer(this.getPlayer().getName());
 
         lines.addAll(
                 Arrays.asList(

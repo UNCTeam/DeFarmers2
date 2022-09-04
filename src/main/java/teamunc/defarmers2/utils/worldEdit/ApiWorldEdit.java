@@ -3,6 +3,7 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -147,7 +148,29 @@ public class ApiWorldEdit {
         }
     }
 
+    public static void generateCircle(int rayon, Location center, Material block) {
+        for (int i = -rayon; i <= rayon; i++) {
+            for (int j = -rayon; j <= rayon; j++) {
+                if (Math.sqrt(i * i + j * j) <= rayon) {
+                    center.clone().add(i, 0, j).getBlock().setType(block);
+                }
+            }
+        }
+    }
 
+    public static void generateWall(int hauteur, int largeur, Location center, Material block, Direction direction) {
+        for (int i = 0; i <= hauteur; i++) {
+            for (int j = -largeur; j <= largeur; j++) {
+                if ( direction == Direction.NORTH || direction == Direction.SOUTH) {
+                    if (center.clone().add(0, i, j).getBlock().getType() != Material.BARRIER)
+                        center.clone().add(0, i, j).getBlock().setType(block);
+                } else {
+                    if (center.clone().add(j, i, 0).getBlock().getType() != Material.BARRIER)
+                        center.clone().add(j, i, 0).getBlock().setType(block);
+                }
+            }
+        }
+    }
     public static void setupItemsList(String fileName) {
         Defarmers2 plugin = Defarmers2.getInstance();
         GameManager gameManager = plugin.getGameManager();

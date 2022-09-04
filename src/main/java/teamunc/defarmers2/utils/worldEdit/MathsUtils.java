@@ -3,6 +3,7 @@ package teamunc.defarmers2.utils.worldEdit;
 import com.sk89q.worldedit.util.Direction;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class MathsUtils {
@@ -28,6 +29,26 @@ public class MathsUtils {
         randomLocation.setX(randomLocation.getX() + (Math.random() * radius * 2) - radius);
         randomLocation.setZ(randomLocation.getZ() + (Math.random() * radius * 2) - radius);
         return randomLocation;
+    }
+
+    public static Direction getCardinalDirection(Player player) {
+        double rotation = (player.getLocation().getYaw() - 90) % 360;
+        if (rotation < 0) {
+            rotation += 360.0;
+        }
+        if (0 <= rotation && rotation < 45) {
+            return Direction.NORTH;
+        } else if (45 <= rotation && rotation < 135) {
+            return Direction.WEST;
+        } else if (135 <= rotation && rotation < 225) {
+            return Direction.SOUTH;
+        } else if (225 <= rotation && rotation < 315) {
+            return Direction.EAST;
+        } else if (315 <= rotation && rotation < 360.0) {
+            return Direction.NORTH;
+        } else {
+            return null;
+        }
     }
 
     /**

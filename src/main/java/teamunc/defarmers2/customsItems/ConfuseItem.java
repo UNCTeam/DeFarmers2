@@ -1,11 +1,20 @@
 package teamunc.defarmers2.customsItems;
 
-import org.bukkit.Bukkit;
+import com.sk89q.worldedit.util.Direction;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import teamunc.defarmers2.managers.TeamManager;
+import teamunc.defarmers2.mobs.EnumMobStatue;
+import teamunc.defarmers2.serializables.MobEffect;
+import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class ConfuseItem extends CustomItem {
 
@@ -17,9 +26,22 @@ public class ConfuseItem extends CustomItem {
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
 
-        Inventory inv = Bukkit.createInventory(null, 54, "Buy Menu");
+        Location location = MathsUtils.getNextLocation(Direction.DOWN, player.getLocation(), 64, null);
+        if (location != null) {
+            // get mobs in a rayon of 15 blocks around the location
+            Collection<Entity> entities = location.getWorld().getNearbyEntities(location, 15, 15, 15);
+            ArrayList<UUID> mobs = new ArrayList<>();
+            for (Entity entity : entities) {
+                if (entity instanceof Mob) {
+                    mobs.add(entity.getUniqueId());
+                    break;
+                }
+            }
 
-        player.openInventory(inv);
+            // adding MobEffect confuse
+            MobEffect mobEffect = new MobEffect(EnumMobStatue.CONFUSE, 20, mobs);
+            TeamManager.getInstance().addMobEffect(mobEffect);
+        }
     }
     @Override
     public @NotNull List<String> getDescription() {

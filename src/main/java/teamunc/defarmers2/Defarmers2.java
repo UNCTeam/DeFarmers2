@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import teamunc.defarmers2.commands.GameCommands;
 import teamunc.defarmers2.commands.TeamCommands;
+import teamunc.defarmers2.customsItems.ui_menu_Items.EffectChooserInventory;
 import teamunc.defarmers2.customsItems.ui_menu_Items.ShopInventory;
 import teamunc.defarmers2.customsItems.ui_menu_Items.TeamChooserInventory;
 import teamunc.defarmers2.eventsListeners.ItemsEvents;
@@ -48,6 +49,7 @@ public final class Defarmers2 extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ItemsEvents(this), this);
         this.getServer().getPluginManager().registerEvents(ShopInventory.getInstance(), this);
         this.getServer().getPluginManager().registerEvents(TeamChooserInventory.getInstance(), this);
+        this.getServer().getPluginManager().registerEvents(EffectChooserInventory.getInstance(), this);
         this.getServer().getPluginManager().registerEvents(new MobsEvents(this), this);
     }
 

@@ -110,8 +110,17 @@ public class GameManager extends Manager {
         // setting up team location
         this.getTeamManager().setupTeams();
 
+        this.removeOfflinePlayers();
+
+        //check if teams are empty
+        this.getTeamManager().removeEmptyTeams();
+
         // setting difficulty
         Bukkit.getWorlds().get(0).setDifficulty(Difficulty.HARD);
+        Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_LOOT, true);
+        Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_TILE_DROPS, true);
+        Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_ENTITY_DROPS, true);
+        Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_SPAWNING, true);
 
         // setting up phase 1 area
         ApiWorldEdit.managePhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1), true);
@@ -122,7 +131,7 @@ public class GameManager extends Manager {
         // setting up phase 3 area
         ApiWorldEdit.managePhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()}, true);
 
-        setupPlayers(false, false);
+        setupPlayers(false, false, false);
 
         // apply resistance to all player
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -178,7 +187,7 @@ public class GameManager extends Manager {
             DeleteAllScoreboard();
 
             // re setuping players
-            this.setupPlayers(true, false);
+            this.setupPlayers(true, false, false);
 
             // teleport players to lobby
             this.teleportPlayers(GameStates.GameState.WAITING_FOR_PLAYERS);
@@ -197,7 +206,7 @@ public class GameManager extends Manager {
     /**
      * apply various effects to players
      */
-    public void setupPlayers(boolean invulnerable, boolean flying) {
+    public void setupPlayers(boolean invulnerable, boolean flying, boolean nightvision) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
                 player.setFoodLevel(20);
@@ -205,6 +214,7 @@ public class GameManager extends Manager {
                 player.setFireTicks(0);
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setInvulnerable(invulnerable);
+                if (nightvision) player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 999999, 1));
                 player.setAllowFlight(flying);
                 player.setFlying(flying);
                 player.setExp(0);
@@ -212,6 +222,15 @@ public class GameManager extends Manager {
                 player.getInventory().clear();
             }
         }
+    }
+
+    public void removeOfflinePlayers() {
+        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+            if (!player.isOnline() && this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
+                this.getTeamManager().leaveTeam(player.getName(),this.getTeamManager().getTeamOfPlayer(player.getName()).getName());
+            }
+        }
+
     }
 
     public void reloadGame() {

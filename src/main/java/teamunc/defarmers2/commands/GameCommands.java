@@ -3,6 +3,7 @@ package teamunc.defarmers2.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Mob;
@@ -16,6 +17,7 @@ import teamunc.defarmers2.mobs.DeFarmersEntityFabric;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +29,6 @@ public class GameCommands extends AbstractCommandExecutor {
     public GameCommands(Defarmers2 plugin) {
         super(plugin);
     }
-
-    private ArrayList<UUID> mobsSpawned = new ArrayList<>();
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("defarmers2")) {
@@ -39,7 +39,8 @@ public class GameCommands extends AbstractCommandExecutor {
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <stop>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <reload>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <nextphase>");
-                GameAnnouncer.sendMessage(sender,"/defarmers2 <test> <(fight)>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <deletePlayers>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <killAllMobsInGame>");
             } else {
                 if (args[0].equalsIgnoreCase("start")) {
                     if (plugin.getGameManager().getGameStates().getState() == GameStates.GameState.WAITING_FOR_PLAYERS) {
@@ -59,30 +60,17 @@ public class GameCommands extends AbstractCommandExecutor {
                         GameAnnouncer.sendMessage(sender, "Next phase...");
                         plugin.getGameManager().nextPhase();
                     } else GameAnnouncer.sendMessage(sender,"Game not started!");
-                } else if (args[0].equalsIgnoreCase("test")) {
-                    if (args.length == 1) {
-                        if (sender instanceof Player) {
-                            Location loc = ((Player) sender).getLocation();
-                            loc.getWorld().spawn(loc, Zombie.class, (entity) -> {
-                                entity.setCustomName("Test");
-                                entity.setCustomNameVisible(true);
-                                this.mobsSpawned.add(entity.getUniqueId());
-                            });
-                        }
-                    } else if (args.length == 2) {
-                        ArrayList<UUID> mobs = (ArrayList<UUID>) this.mobsSpawned.clone();
-                        for (UUID uuid : mobs) {
-                            Mob mob = (Mob) Bukkit.getEntity(uuid);
-                            if (mob != null) {
-                                List<UUID> uuidsWoutThisOne = this.mobsSpawned.stream().filter(uuidTarget -> !uuidTarget.equals(uuid)).collect(Collectors.toList());
-                                Collections.shuffle(uuidsWoutThisOne);
-                                Mob mobTarget = (Mob) Bukkit.getEntity(uuidsWoutThisOne.get(0));
-                                if (mobTarget != null) {
-                                    mob.setTarget(mobTarget);
-                                } else this.mobsSpawned.remove(uuidsWoutThisOne.get(0));
-                            } else this.mobsSpawned.remove(uuid);
-                        }
+                } else if (args[0].equalsIgnoreCase("deletePlayers")) {
+                    File BaseFolder = new File(Bukkit.getServer().getWorlds().get(0).getWorldFolder(), "playerdata");
+
+                    for(OfflinePlayer p : Bukkit.getOfflinePlayers())
+                    {
+                        File playerFile = new File(BaseFolder, p.getUniqueId()+".dat");
+
+                        playerFile.delete();
                     }
+                } else if (args[0].equalsIgnoreCase("killAllMobsInGame")) {
+                    this.plugin.getGameManager().getCustomMobsManager().clearMobs();
                 } else {
                     GameAnnouncer.sendMessage(sender,"Invalid command.");
                 }

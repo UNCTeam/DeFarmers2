@@ -80,7 +80,7 @@ public class CustomMobsManager extends Manager{
         for (Team team : teamManager.getTeams()) {
             ArrayList<UUID> mobsSpawnedOfTeam = (ArrayList<UUID>) teamManager.getMobsSpawnedOfTeam(team.getName()).clone();
             for (UUID uuid : mobsSpawnedOfTeam) {
-                Entity NextTarget = null;
+                Entity nextTarget = null;
                 Mob mob = (Mob) Bukkit.getEntity(uuid);
 
                 if (mob == null) {
@@ -104,24 +104,24 @@ public class CustomMobsManager extends Manager{
                     // update target
                     if (!gameStates.hasMobTargeting(uuid)) {
                         // set a new first target
-                        NextTarget = getNearestLivingEntity(null, mob, team.getName());
-                        gameStates.setMobTargeting(uuid, NextTarget.getUniqueId());
+                        nextTarget = getNearestLivingEntity(null, mob, team.getName());
+                        gameStates.setMobTargeting(uuid, nextTarget.getUniqueId());
                     } else {
                         UUID targetedUuid = gameStates.getMobTargeting(uuid);
                         Entity targetedEntity = Bukkit.getEntity(targetedUuid);
 
                         if (targetedEntity != null) {
-                            NextTarget = targetedEntity;
+                            nextTarget = targetedEntity;
                         } else {
                             // targeted entity is dead
                             gameStates.removeMobTargeting(targetedUuid);
-                            NextTarget = getNearestLivingEntity(null, mob, team.getName());
+                            nextTarget = getNearestLivingEntity(null, mob, team.getName());
                         }
                     }
                 }
 
-                if (NextTarget != null) {
-                    mob.setTarget((LivingEntity) NextTarget);
+                if (nextTarget != null) {
+                    mob.setTarget((LivingEntity) nextTarget);
                 }
             }
         }
@@ -167,6 +167,7 @@ public class CustomMobsManager extends Manager{
 
     /**
      * if there is no mob in the list, return the nearest mob of the list of mobs in other teams
+     * if teamName is null then take any nearest mobs
      * @param mobsTargetedTeam
      * @param mob
      * @return
@@ -176,10 +177,11 @@ public class CustomMobsManager extends Manager{
         TeamManager teamManager = this.plugin.getGameManager().getTeamManager();
 
         // if there is no mob in the list, return the nearest mob of the list of mobs in other teams
+        // if teamName is null then take any nearest mobs
         if (mobsTargetedTeam == null) {
             mobsTargetedTeam = new ArrayList<>();
             for (Team team : teamManager.getTeams()) {
-                if (!team.getName().equals(teamName)) {
+                if (teamName == null || !team.getName().equals(teamName)) {
                     mobsTargetedTeam.addAll(teamManager.getMobsSpawnedOfTeam(team.getName()));
                 }
             }
@@ -192,7 +194,7 @@ public class CustomMobsManager extends Manager{
             double distance = Double.MAX_VALUE;
             for (UUID uuid : mobsTargetedTeam) {
                 Entity entity = Bukkit.getEntity(uuid);
-                if (entity instanceof Mob) {
+                if (entity instanceof Mob && !mob.getUniqueId().equals(uuid)) {
                     Mob mobTargeted = (Mob) entity;
                     double newDistance = mob.getLocation().distance(mobTargeted.getLocation());
                     if (newDistance < distance) {
@@ -208,5 +210,14 @@ public class CustomMobsManager extends Manager{
 
     public UUID getTargetUUID(String name, Mob mob) {
         return null;
+    }
+
+    public void clearMobs() {
+        for (UUID uuid : this.plugin.getGameManager().getTeamManager().getAllSpawnedMobsOfAllTeams()) {
+            Entity entity = Bukkit.getEntity(uuid);
+            if (entity != null) {
+                entity.remove();
+            }
+        }
     }
 }

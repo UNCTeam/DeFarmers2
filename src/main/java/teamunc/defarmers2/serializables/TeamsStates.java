@@ -6,12 +6,14 @@ import org.bukkit.scoreboard.Team;
 import teamunc.defarmers2.customsItems.CustomItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.managers.CustomItemsManager;
+import teamunc.defarmers2.mobs.EnumMobStatue;
 
 import java.io.Serializable;
 import java.util.*;
 
 public class TeamsStates implements Serializable {
     private final ArrayList<TeamInfo> teamsInfos = new ArrayList<>();
+    private final ArrayList<MobEffect> mobEffects = new ArrayList<>();
 
     /// TEAM MONEY ///
     public void setTeamMoney(String teamID, int money){
@@ -164,15 +166,14 @@ public class TeamsStates implements Serializable {
         }
         if (artefacts == null) return null;
 
-        CustomItem[] customItems = new CustomItem[artefacts.size()];
-        int i = 0;
+        ArrayList<CustomItem> customItems = new ArrayList<>();
         for (String customType : artefacts.keySet()) {
-            CustomItem customItem = CustomItemsManager.getCustomItem(customType);
-            customItem.setAmount(artefacts.get(customType));
-            customItems[i] = customItem;
-            i++;
+            for (int j = 0; j < artefacts.get(customType); j++) {
+                CustomItem customItem = CustomItemsManager.getCustomItem(customType);
+                customItems.add(customItem);
+            }
         }
-        return customItems;
+        return customItems.toArray(new CustomItem[0]);
     }
 
     /// TEAM MOBS ///
@@ -215,6 +216,15 @@ public class TeamsStates implements Serializable {
             }
         }
     }
+    public void removeMobEffect(MobEffect mobEffect) {
+        this.mobEffects.remove(mobEffect);
+    }
+    public void addMobEffect(MobEffect mobEffect) {
+        this.mobEffects.add(mobEffect);
+    }
+    public ArrayList<MobEffect> getMobEffects() {
+        return mobEffects;
+    }
 
     /// CLASSEMENT ///
 
@@ -239,4 +249,11 @@ public class TeamsStates implements Serializable {
         return teams;
     }
 
+    public void addTeamLogToTeam(String teamName, String teamLog) {
+        for (TeamInfo teamInfo : teamsInfos) {
+            if (teamInfo.getTeamID().equals(teamName)) {
+                teamInfo.addTeamLog(teamLog);
+            }
+        }
+    }
 }

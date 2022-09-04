@@ -27,9 +27,9 @@ public class SuperMobItem extends CustomItem {
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
         TeamManager teamManager = TeamManager.getInstance();
-        Team team = teamManager.getTeamOfPlayer(player);
+        Team team = teamManager.getTeamOfPlayer(player.getName());
         DeFarmersEntityFabric deFarmersEntityFabric = DeFarmersEntityFabric.getInstance();
-        Mob mob = deFarmersEntityFabric.createDeFarmersMob(DeFarmersEntityType.ZOMBIE, team.getName(), GameStates.GameState.PHASE3, 1, MathsUtils.getNextLocation(Direction.DOWN,player.getLocation(), 32,null).add(0,1,0));
+        Mob mob = deFarmersEntityFabric.createDeFarmersMob(DeFarmersEntityType.ZOMBIE, team.getName(), GameStates.GameState.PHASE3, 1, MathsUtils.getNextLocation(Direction.DOWN,player.getLocation(), 32,null).add(0,4,0));
         mob.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 6));
         mob.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 2));
     }

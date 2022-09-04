@@ -89,7 +89,7 @@ public class TeamChooserInventory implements Listener {
         // Create a new inventory, with no owner (as this isn't a real inventory)
         Inventory inv = Bukkit.createInventory(new TeamChooserHolder(action), 27, "Team Chooser");
         ent.openInventory(inv);
-        Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer((Player) ent);
+        Team team = Defarmers2.getInstance().getGameManager().getTeamManager().getTeamOfPlayer(ent.getName());
         initializeItems(inv, team);
     }
 

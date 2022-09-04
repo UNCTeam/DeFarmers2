@@ -22,7 +22,7 @@ public class DinnerboneItem extends CustomItem {
         Player player = params.getPlayer();
         TeamManager teamManager = TeamManager.getInstance();
 
-        Team team = teamManager.getTeamOfPlayer(player);
+        Team team = teamManager.getTeamOfPlayer(player.getName());
 
         for (UUID uuid : teamManager.getMobsSpawnedOfTeam(team.getName())) {
             Mob mob = (Mob) Bukkit.getEntity(uuid);

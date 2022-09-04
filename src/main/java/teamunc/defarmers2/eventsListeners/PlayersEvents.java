@@ -58,12 +58,12 @@ public class PlayersEvents extends AbstractListener {
         Player player = event.getPlayer();
         GameManager gameManager = this.plugin.getGameManager();
         TeamManager teamManager = gameManager.getTeamManager();
-        Team team = teamManager.getTeamOfPlayer(player);
+        Team team = teamManager.getTeamOfPlayer(player.getName());
 
         if (gameManager.getGameStates().getState().isInGamePhase() && team != null) {
 
             Location respawnLocation = teamManager.getTeamSpawnLocation(team.getName(),gameManager.getGameStates().getState());
-            System.out.println("Respawn location: " + respawnLocation);
+
             event.setRespawnLocation(respawnLocation.subtract(0, 1, 0));
 
         } else {

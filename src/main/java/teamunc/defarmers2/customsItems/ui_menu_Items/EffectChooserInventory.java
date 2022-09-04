@@ -74,7 +74,7 @@ public class EffectChooserInventory implements Listener {
         // verify current item is not null
         if (clickedItem == null || clickedItem.getType().isAir()) return;
 
-        String teamName = teamManager.getTeamOfPlayer(p).getName();
+        String teamName = teamManager.getTeamOfPlayer(p.getName()).getName();
 
         PotionEffect potionEffect = null;
         switch (clickedItem.getType()) {
@@ -88,7 +88,7 @@ public class EffectChooserInventory implements Listener {
                 potionEffect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 15, 2);
                 break;
         }
-
+        System.out.println("Potion effect: " + potionEffect);
         ((EffectChooserHolder) e.getClickedInventory().getHolder()).execute(teamName, potionEffect);
         p.closeInventory();
     }

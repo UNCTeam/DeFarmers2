@@ -1,9 +1,11 @@
 package teamunc.defarmers2.customsItems;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
+import teamunc.defarmers2.managers.GameManager;
 
 import java.util.List;
 
@@ -16,8 +18,12 @@ public class ThunderItem extends CustomItem {
     @Override
     public void onClick(CustomItemParams params) {
         Player player = params.getPlayer();
+        GameManager gameManager = GameManager.getInstance();
+        Location location = player.getLocation();
 
-        player.getLocation().getWorld().strikeLightning(player.getLocation().subtract(0, 26, 0));
+        location.setY(gameManager.getGameOptions().getPhase3LocationCenter().getY());
+
+        player.getLocation().getWorld().strikeLightning(location);
     }
     @Override
     public @NotNull List<String> getDescription() {

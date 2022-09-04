@@ -14,6 +14,7 @@ import teamunc.defarmers2.customsItems.ShopItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.CustomUIItem;
 import teamunc.defarmers2.customsItems.ui_menu_Items.ItemTypeEnum;
 import teamunc.defarmers2.serializables.GameStates;
+import teamunc.defarmers2.serializables.MobEffect;
 import teamunc.defarmers2.serializables.TeamsStates;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
@@ -75,10 +76,10 @@ public class TeamManager extends Manager{
         return null;
     }
 
-    public Team getTeamOfPlayer(Player player) {
+    public Team getTeamOfPlayer(String player) {
         if (this.teamsStates != null)
             for (Team team : this.teamsStates.getAllTeams()) {
-                if (this.teamsStates.isTeamInit(team.getName()) && team.hasEntry(player.getName())) {
+                if (this.teamsStates.isTeamInit(team.getName()) && team.hasEntry(player)) {
                     return team;
                 }
             }
@@ -190,7 +191,7 @@ public class TeamManager extends Manager{
                 for (String playerName : team.getEntries()) {
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null) {
-                        Bukkit.getPlayer(playerName).teleport(this.plugin.getGameManager().getPhaseSpawn(state).add(0, 1, 0));
+                        Bukkit.getPlayer(playerName).teleport(this.plugin.getGameManager().getPhaseSpawn(state).clone().add(0, 1, 0));
                     }
                 }
             }
@@ -259,7 +260,7 @@ public class TeamManager extends Manager{
                 for (String playerName : team.getEntries()) {
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null) {
-                        Bukkit.getPlayer(playerName).teleport(this.teamsStates.getTeamSpawnLocation(team.getName(), state).add(0, 1, 0));
+                        Bukkit.getPlayer(playerName).teleport(this.teamsStates.getTeamSpawnLocation(team.getName(), state).clone().add(0, 1, 0));
                     }
                 }
             }
@@ -483,5 +484,43 @@ public class TeamManager extends Manager{
 
     public HashMap<Integer,ArrayList<Team>> getClassement() {
         return this.teamsStates.getClassement();
+    }
+
+    public void addTeamLogToTeam(String teamName, String teamLog) {
+        this.teamsStates.addTeamLogToTeam(teamName, teamLog);
+    }
+
+    public void removeEmptyTeams() {
+        for (Team team : this.getTeams()) {
+            if (this.getPlayersInTeamOnline(team.getName()).size() == 0) {
+                // log it
+                this.plugin.getLogger().info("Team " + team.getName() + " has no players");
+
+                this.removeTeam(team.getName());
+            }
+        }
+    }
+
+    public ArrayList<MobEffect> getMobEffects() {
+        return this.teamsStates.getMobEffects();
+    }
+
+    public void addMobEffect(MobEffect mobEffect) {
+        this.teamsStates.addMobEffect(mobEffect);
+    }
+
+    public void removeMobEffect(MobEffect mobEffect) {
+        this.teamsStates.removeMobEffect(mobEffect);
+    }
+
+    public void mobEffectsActions() {
+        ArrayList<MobEffect> mobEffects = new ArrayList<>(this.getMobEffects());
+
+        for (MobEffect mobEffect : mobEffects) {
+            boolean toDelete = mobEffect.action();
+            if (toDelete) {
+                this.removeMobEffect(mobEffect);
+            }
+        }
     }
 }

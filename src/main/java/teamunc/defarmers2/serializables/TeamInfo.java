@@ -1,6 +1,7 @@
 package teamunc.defarmers2.serializables;
 
 import org.bukkit.Location;
+import teamunc.defarmers2.mobs.EnumMobStatue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,12 +12,12 @@ public class TeamInfo implements Serializable {
     private String teamID;
     private int score;
     private int money;
-    private int classement;
     private boolean isDead;
     private HashMap<String, Integer> artefacts;
     private HashMap<String, Integer> mobs;
     private HashMap<GameStates.GameState, Location> spawnPerPhase;
     private ArrayList<UUID> customMobsAssociation;
+    private ArrayList<String> teamLogs;
 
     public TeamInfo(String teamID, int score, int money, boolean isDead, HashMap<String, Integer> artefacts, HashMap<String, Integer> mobs, HashMap<GameStates.GameState, Location> spawnPerPhase, ArrayList<UUID> customMobsAssociation) {
         this.teamID = teamID;
@@ -27,15 +28,15 @@ public class TeamInfo implements Serializable {
         this.mobs = mobs;
         this.spawnPerPhase = spawnPerPhase;
         this.customMobsAssociation = customMobsAssociation;
-        this.classement = 0;
+        this.teamLogs = new ArrayList<>();
     }
 
-    public int getClassement() {
-        return classement;
+    public ArrayList<String> getTeamLogs() {
+        return teamLogs;
     }
 
-    public void setClassement(int classement) {
-        this.classement = classement;
+    public void addTeamLog(String teamLog) {
+        this.teamLogs.add(teamLog);
     }
 
     public void setTeamID(String teamID) {
