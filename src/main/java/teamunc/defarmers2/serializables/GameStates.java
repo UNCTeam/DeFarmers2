@@ -92,6 +92,7 @@ public class GameStates implements Serializable {
 	}
 
 	public void setMobTargeting(UUID mob, UUID target) {
-		mobsTargeting.put(mob, target);
+		if (target == null) mobsTargeting.remove(mob);
+		else mobsTargeting.put(mob, target);
 	}
 }

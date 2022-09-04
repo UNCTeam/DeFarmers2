@@ -5,22 +5,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomMobsManager;
 import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.serializables.GameStates;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public enum EnumMobStatue {
+public enum EnumMobStatue implements Serializable {
     CONFUSE,
     BEEE_EVIL,
     BEEE,
     FOLLOWING_PLAYER
     ;
 
+    private UUID triggeringPlayer;
     public void action(ArrayList<UUID> mobs) {
         switch (this) {
 
@@ -32,11 +35,13 @@ public enum EnumMobStatue {
             case BEEE:
                 break;
             case FOLLOWING_PLAYER:
+                actionFollowingPlayer(mobs);
                 break;
         }
     }
 
-    public void init(ArrayList<UUID> mobs) {
+    public void init(ArrayList<UUID> mobs, UUID triggeringPlayer) {
+        this.triggeringPlayer = triggeringPlayer;
         switch (this) {
             case CONFUSE:
                 this.initConfuse(mobs);
@@ -46,6 +51,7 @@ public enum EnumMobStatue {
             case BEEE:
                 break;
             case FOLLOWING_PLAYER:
+                initFollowingPlayer(mobs);
                 break;
         }
     }
@@ -60,10 +66,12 @@ public enum EnumMobStatue {
             case BEEE:
                 break;
             case FOLLOWING_PLAYER:
+                endFollowingPlayer(mobs);
                 break;
         }
     }
 
+    /// CONFUSE ///
     private void actionConfuse(ArrayList<UUID> mobs) {
         GameManager gameManager = Defarmers2.getInstance().getGameManager();
         GameStates gameStates = gameManager.getGameStates();
@@ -105,7 +113,6 @@ public enum EnumMobStatue {
             }
         }
     }
-
     private void initConfuse(ArrayList<UUID> mobs) {
         GameManager gameManager = Defarmers2.getInstance().getGameManager();
         GameStates gameStates = gameManager.getGameStates();
@@ -126,7 +133,6 @@ public enum EnumMobStatue {
             }
         }
     }
-
     private void endConfuse(ArrayList<UUID> mobs) {
         GameManager gameManager = Defarmers2.getInstance().getGameManager();
         GameStates gameStates = gameManager.getGameStates();
@@ -151,4 +157,38 @@ public enum EnumMobStatue {
         }
     }
 
+    /// FOLLOW FOLLOWING_PLAYER ///
+    private void actionFollowingPlayer(ArrayList<UUID> mobs) {
+        // No.
+    }
+    private void initFollowingPlayer(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            LivingEntity nextTarget = (Player) Bukkit.getEntity(triggeringPlayer);
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                if (nextTarget != null) {
+                    gameStates.setMobTargeting(uuid, nextTarget.getUniqueId());
+                    mob.setTarget(nextTarget);
+                }
+            }
+        }
+    }
+    private void endFollowingPlayer(ArrayList<UUID> mobs) {
+        GameStates gameStates = Defarmers2.getInstance().getGameManager().getGameStates();
+
+        for (UUID uuid : mobs) {
+            Mob mob = (Mob) Bukkit.getEntity(uuid);
+
+            if (mob != null) {
+                // update target
+                if (gameStates.hasMobTargeting(uuid)) {
+                    // reset target
+                    gameStates.setMobTargeting(uuid, null);
+                }
+            }
+        }
+    }
 }

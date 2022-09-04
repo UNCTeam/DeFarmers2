@@ -39,7 +39,7 @@ public class ConfuseItem extends CustomItem {
             }
 
             // adding MobEffect confuse
-            MobEffect mobEffect = new MobEffect(EnumMobStatue.CONFUSE, 20, mobs);
+            MobEffect mobEffect = new MobEffect(EnumMobStatue.CONFUSE, 20, mobs, player.getUniqueId());
             TeamManager.getInstance().addMobEffect(mobEffect);
         }
     }

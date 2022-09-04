@@ -11,11 +11,11 @@ public class MobEffect implements Serializable {
     private int timeLeft;
     private final ArrayList<UUID> mobs;
 
-    public MobEffect(EnumMobStatue statue, int timeLeft, ArrayList<UUID> mobs) {
+    public MobEffect(EnumMobStatue statue, int timeLeft, ArrayList<UUID> mobs, UUID triggeringPlayer) {
         this.statue = statue;
         this.timeLeft = timeLeft;
-        this.mobs = mobs;
-        this.statue.init(mobs);
+        this.mobs = new ArrayList<>(mobs);
+        this.statue.init(mobs, triggeringPlayer);
     }
 
     /**
@@ -27,7 +27,6 @@ public class MobEffect implements Serializable {
             this.end();
             return true;
         }
-        System.out.println("Effect on " + mobs + " Time left : " + timeLeft);
         statue.action(mobs);
 
         timeLeft--;

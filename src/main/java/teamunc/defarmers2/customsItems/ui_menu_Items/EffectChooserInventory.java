@@ -88,7 +88,6 @@ public class EffectChooserInventory implements Listener {
                 potionEffect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 15, 2);
                 break;
         }
-        System.out.println("Potion effect: " + potionEffect);
         ((EffectChooserHolder) e.getClickedInventory().getHolder()).execute(teamName, potionEffect);
         p.closeInventory();
     }
