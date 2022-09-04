@@ -24,7 +24,7 @@ public class MeteoriteItem extends CustomItem {
         Location location = MathsUtils.getRandomLocation(player.getLocation(), 10);
         location.setY(gameManager.getPhaseSpawn(GameStates.GameState.PHASE3).getY());
 
-        location.getWorld().createExplosion(location, 8F, false);
+        location.getWorld().createExplosion(location, 6F, false);
 
     }
     @Override
