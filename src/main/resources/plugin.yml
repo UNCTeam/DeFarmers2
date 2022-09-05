@@ -13,13 +13,19 @@ commands:
         aliases: [ df2 ]
         usage: /defarmers2
         description: Defarmers2
-        permission: defarmers2.user
+        permission: defarmers2.admin
 
     team:
         aliases: [ t ]
         usage: /team
         description: Defarmers2 team
         permission: defarmers2.admin
+
+    minigame:
+        aliases: [ mg ]
+        usage: /minigame
+        description: Defarmers2 minigame
+        permission: defarmers2.user
 
 
 

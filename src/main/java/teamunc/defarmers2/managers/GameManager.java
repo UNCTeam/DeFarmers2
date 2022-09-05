@@ -6,10 +6,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
+import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.serializables.GameOptions;
 import teamunc.defarmers2.serializables.GameStates;
+import teamunc.defarmers2.utils.minigame.MiniGame;
 import teamunc.defarmers2.utils.scoreboards.InGameInfoScoreboard;
 import teamunc.defarmers2.utils.worldEdit.ApiWorldEdit;
+import teamunc.defarmers2.utils.worldEdit.DoubleValue;
 import teamunc.defarmers2.utils.worldEdit.InGameItemsList;
 import teamunc.defarmers2.utils.worldEdit.MathsUtils;
 
@@ -19,7 +22,7 @@ public class GameManager extends Manager {
 
     // States
     private GameStates gameStates;
-
+    private MiniGame miniGame;
     // InGameInfoScoreboards
     private ArrayList<InGameInfoScoreboard> inGameInfoScoreboards;
 
@@ -64,7 +67,7 @@ public class GameManager extends Manager {
         if (this.getFileManager().fileExists("default_itemList")) {
             this.gameStates.setItemsList(this.getFileManager().loadJson("default_itemList", InGameItemsList.class));
         } else {
-            this.gameStates.setItemsList(new InGameItemsList(new HashMap<>(Map.of("STONE",1))));
+            this.gameStates.setItemsList(new InGameItemsList(new HashMap<>(Map.of("STONE", new DoubleValue(1, 5)))));
             this.getFileManager().saveJson("default_itemList",this.gameStates.getItemsList());
         }
 
@@ -82,6 +85,11 @@ public class GameManager extends Manager {
                 if(this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
                     this.resetInGameScoreboard(player);
                 }
+            }
+        } else {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1000000, 20));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 20));
             }
         }
 
@@ -212,9 +220,21 @@ public class GameManager extends Manager {
                 player.setFoodLevel(20);
                 player.setHealth(20);
                 player.setFireTicks(0);
+                player.setInvulnerable(false);
                 player.setGameMode(GameMode.SURVIVAL);
-                player.setInvulnerable(invulnerable);
                 if (nightvision) player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 999999, 1));
+                else player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+
+                if (invulnerable) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1000000, 20));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1000000, 20));
+                    if (gameStates.getState() == GameStates.GameState.PHASE3) {
+                        player.setInvulnerable(true);
+                    }
+                } else {
+                    player.removePotionEffect(PotionEffectType.SATURATION);
+                    player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+                }
                 player.setAllowFlight(flying);
                 player.setFlying(flying);
                 player.setExp(0);
@@ -318,5 +338,44 @@ public class GameManager extends Manager {
 
     public void nextPhase() {
         this.getTickActionsManager().nextPhase();
+    }
+
+    public boolean joinMiniGame(Player player) {
+        if (this.miniGame == null) this.miniGame = new MiniGame();
+
+        if (this.gameStates.getState() == GameStates.GameState.WAITING_FOR_PLAYERS && !this.miniGame.isGameRunning()) {
+            miniGame.addPlayer(player);
+            GameAnnouncer.sendMessageToAllOnlinePlayer(Bukkit.getOnlinePlayers(), "§a" + player.getName() + " a rejoint le mini-jeu ! /minigame pour rejoindre");
+
+            miniGame.tryToStart();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isMiniGameRunning() {
+        return this.miniGame != null && this.miniGame.isGameRunning();
+    }
+
+    public MiniGame getMiniGame() {
+        return this.miniGame;
+    }
+
+    public void endMiniGame() {
+        this.miniGame = null;
+    }
+
+    public void forceEndMiniGame() {
+        GameAnnouncer.sendMessageToAllOnlinePlayer(Bukkit.getOnlinePlayers(), "§cLe mini-jeu a été forcé à s'arrêter !");
+        for (UUID uuid : miniGame.getPlayers()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.teleport(this.getGameOptions().getLobbyLocation().clone().add(0, 1, 0));
+            }
+            player.getInventory().clear();
+        }
+        this.miniGame = null;
     }
 }

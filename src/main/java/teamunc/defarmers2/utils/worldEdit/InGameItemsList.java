@@ -2,17 +2,31 @@ package teamunc.defarmers2.utils.worldEdit;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 
 public class InGameItemsList implements Serializable {
 
-    private HashMap<String,Integer> itemsListWithPrice;
+    private HashMap<String,DoubleValue> itemsListWithPrice;
+    private long seed;
 
     //getter
     public HashMap<String, Integer> getItemsListWithPrice() {
-        return itemsListWithPrice;
+        this.seed = new Random().nextInt(1000000);
+        HashMap<String,Integer> itemsListWithPriceEnd = new HashMap<>();
+
+        for (String key : itemsListWithPrice.keySet()) {
+            itemsListWithPriceEnd.put(key,getRandomValueFromSeed(itemsListWithPrice.get(key)));
+        }
+
+        return itemsListWithPriceEnd;
     }
 
-    public InGameItemsList(HashMap<String,Integer> itemsListWithPrice) {
+    private Integer getRandomValueFromSeed(DoubleValue minMaxValue) {
+        Random random = new Random(seed);
+        return random.nextInt(minMaxValue.getMax() - minMaxValue.getMin()) + minMaxValue.getMin();
+    }
+
+    public InGameItemsList(HashMap<String,DoubleValue> itemsListWithPrice) {
         this.itemsListWithPrice = itemsListWithPrice;
     }
 }

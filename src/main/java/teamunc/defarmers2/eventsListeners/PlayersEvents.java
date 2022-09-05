@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -15,6 +16,7 @@ import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.serializables.GameStates;
+import teamunc.defarmers2.utils.minigame.MiniGame;
 
 public class PlayersEvents extends AbstractListener {
 
@@ -70,4 +72,35 @@ public class PlayersEvents extends AbstractListener {
             event.setRespawnLocation(player.getWorld().getSpawnLocation());
         }
     }
+
+
+    /// COPS AND ROBBERS EVENTS ///
+
+    @EventHandler
+    public void onPlayerDamagingAPlayer(EntityDamageByEntityEvent e) {
+        GameManager gameManager = this.plugin.getGameManager();
+        if (gameManager.isMiniGameRunning()) {
+            MiniGame miniGame = gameManager.getMiniGame();
+            if (e.getDamager() instanceof Player && e.getEntity() instanceof Player) {
+                if (miniGame.isCop((Player) e.getDamager()) && miniGame.isRobber((Player) e.getEntity())) {
+                    e.setCancelled(true);
+                    miniGame.sendRobberToJail((Player) e.getEntity());
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteractWithStoneButton(PlayerInteractEvent e) {
+        GameManager gameManager = this.plugin.getGameManager();
+        if (gameManager.isMiniGameRunning()) {
+            MiniGame miniGame = gameManager.getMiniGame();
+            if (e.getClickedBlock() != null && e.getClickedBlock().getLocation().equals(miniGame.getButtonFreeJailLocation())) {
+                if (miniGame.isRobber(e.getPlayer())) {
+                    miniGame.freeRobbers();
+                }
+            }
+        }
+    }
+
 }

@@ -111,7 +111,7 @@ public class ApiWorldEdit {
         for (Location location : locations) {
             for (int i = -26; i <= 26; i++) {
                 for (int j = -26; j <= 26; j++) {
-                    for (int k = -101; k <= 2; k++) {
+                    for (int k = -121; k <= 2; k++) {
                         Block blockCloned = location.clone().add(i, k, j).getBlock();
                         if (blockCloned.getType() != Material.AIR)
                             blockCloned.setType(Material.AIR);

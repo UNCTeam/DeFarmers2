@@ -75,8 +75,8 @@ public class DeFarmersEntityFabric {
                     ((Wolf) mob).setCollarColor(DyeColor.valueOf(teamName));
                     mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getBaseValue() * 2);
                     break;
-                case EVOKER:
-                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Evoker.class);
+                case WITCH:
+                    mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Witch.class);
                     break;
                 case FOX:
                     mob = location.getWorld().spawn(randomLocation, org.bukkit.entity.Fox.class);

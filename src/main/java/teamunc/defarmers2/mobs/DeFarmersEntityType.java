@@ -20,8 +20,8 @@ public enum DeFarmersEntityType {
     CAT("Cat", 16),
     RAVAGER("Ravager", 19),
     WOLF("Wolf", 11),
-    ENDERMITE("Endermite", 12),
-    EVOKER("Evoker", 18),
+    ENDERMITE("Endermite", 14),
+    WITCH("Witch", 10),
     POLAR_BEAR("PolarBear", 20),
     ;
 

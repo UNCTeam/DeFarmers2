@@ -13,6 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.CustomMobsManager;
 import teamunc.defarmers2.managers.GameAnnouncer;
+import teamunc.defarmers2.managers.GameManager;
 import teamunc.defarmers2.mobs.DeFarmersEntityFabric;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameStates;
@@ -41,6 +42,7 @@ public class GameCommands extends AbstractCommandExecutor {
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <nextphase>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <deletePlayers>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <killAllMobsInGame>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <forceEndMiniGame>");
             } else {
                 if (args[0].equalsIgnoreCase("start")) {
                     if (plugin.getGameManager().getGameStates().getState() == GameStates.GameState.WAITING_FOR_PLAYERS) {
@@ -71,9 +73,19 @@ public class GameCommands extends AbstractCommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("killAllMobsInGame")) {
                     this.plugin.getGameManager().getCustomMobsManager().clearMobs();
+                } else if (args[0].equalsIgnoreCase("forceEndMiniGame")) {
+                    this.plugin.getGameManager().forceEndMiniGame();
                 } else {
                     GameAnnouncer.sendMessage(sender,"Invalid command.");
                 }
+            }
+        } else if (cmd.getName().equalsIgnoreCase("minigame")) {
+            GameManager gameManager = plugin.getGameManager();
+            boolean joined = gameManager.joinMiniGame((Player) sender);
+            if (joined) {
+                GameAnnouncer.sendMessage(sender, "Joined minigame!");
+            } else {
+                GameAnnouncer.sendMessage(sender, "Failed to join minigame!");
             }
         }
         return true;
