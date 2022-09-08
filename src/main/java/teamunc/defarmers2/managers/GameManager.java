@@ -2,7 +2,8 @@ package teamunc.defarmers2.managers;
 
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -140,7 +141,7 @@ public class GameManager extends Manager {
         // setting up phase 3 area
         ApiWorldEdit.managePhase3Area(new Location[]{this.gameOptions.getPhase3LocationCenter()}, true);
 
-        setupPlayers(false, false, false);
+        setupPlayers(false, false, false, true);
 
         // apply resistance to all player
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -149,6 +150,9 @@ public class GameManager extends Manager {
 
         // teleport players to phase 1
         teleportPlayers(GameStates.GameState.PHASE1);
+
+        // spawn cows in phase 1
+        this.spawnMob(GameStates.GameState.PHASE1,this.gameOptions.getMobCountAtSpawn(), EntityType.COW);
 
         // little particle effect
         for (Location location : this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1)) {
@@ -172,6 +176,15 @@ public class GameManager extends Manager {
         this.eachSecondsTimerID = scheduler.scheduleSyncRepeatingTask(this.plugin, () -> getTickActionsManager().onTick(),  0L, 20L);
     }
 
+    private void spawnMob(GameStates.GameState phase, int mobCountAtSpawn, EntityType entityType) {
+        for (Location location : this.getTeamManager().getTeamSpawns(phase)) {
+            for (int i = 0; i < mobCountAtSpawn; i++) {
+                Mob mob = (Mob) location.getWorld().spawnEntity(location, entityType);
+                mob.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40, 20));
+            }
+        }
+    }
+
     public void stopTickLoop() {
         scheduler.cancelTask(this.eachSecondsTimerID);
     }
@@ -181,10 +194,7 @@ public class GameManager extends Manager {
             // saving stats
             this.getFileManager().saveJson(
                     "SavedGame_" + UUID.randomUUID(),
-                    new SavedGame(
-                            this.gameStates,
-                            this.getTeamManager().getTeamStates()
-                    )
+                    new SavedGame(gameStates, this.getTeamManager().getTeamStates())
             );
 
             // reseting gameStates
@@ -202,7 +212,7 @@ public class GameManager extends Manager {
             DeleteAllScoreboard();
 
             // re setuping players
-            this.setupPlayers(true, false, false);
+            this.setupPlayers(true, false, false, false);
 
             // teleport players to lobby
             this.teleportPlayers(GameStates.GameState.WAITING_FOR_PLAYERS);
@@ -221,7 +231,7 @@ public class GameManager extends Manager {
     /**
      * apply various effects to players
      */
-    public void setupPlayers(boolean invulnerable, boolean flying, boolean nightvision) {
+    public void setupPlayers(boolean invulnerable, boolean flying, boolean nightvision, boolean giveFood) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (this.getTeamManager().getPlayersInTeams().containsKey(player.getName())) {
                 player.setFoodLevel(20);
@@ -247,6 +257,9 @@ public class GameManager extends Manager {
                 player.setExp(0);
                 player.setLevel(0);
                 player.getInventory().clear();
+
+                if (giveFood)
+                    player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 64));
             }
         }
     }

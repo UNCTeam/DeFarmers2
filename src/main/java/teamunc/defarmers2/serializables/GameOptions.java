@@ -42,7 +42,7 @@ public class GameOptions {
         config.addDefault("endGameLocationCenter", new Location(Bukkit.getWorlds().get(0), 0, 150, 0));
 
         config.addDefault("starting-money", 0);
-
+        config.addDefault("mobCountAtSpawn", 10);
 
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
             config.addDefault("custom-item." + type + ".price", CustomItemsManager.getCustomItem(type).getDefaultPrice());
@@ -111,5 +111,9 @@ public class GameOptions {
 
     public int getCustomMobPrice(DeFarmersEntityType type) {
         return config.getInt("custom-mob." + type.toString() + ".price");
+    }
+
+    public int getMobCountAtSpawn() {
+        return config.getInt("mobCountAtSpawn");
     }
 }

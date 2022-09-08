@@ -1,12 +1,15 @@
 package teamunc.defarmers2.utils.worldEdit;
+import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.world.biome.BiomeType;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.FileManager;
@@ -16,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -87,7 +91,7 @@ public class ApiWorldEdit {
         }
 
         // searching a random schematic
-        File file = files.get((int) (Math.random() * files.size()));
+        File file = files.get(new Random(Defarmers2.getInstance().getGameManager().getSeedOrGenerate()).nextInt(files.size()));
 
         if (fileName.contains("phase1")) setupItemsList(file.getName());
 
@@ -97,9 +101,23 @@ public class ApiWorldEdit {
             ClipboardFormat format = ClipboardFormats.findByFile(file);
             BlockVector3 pos = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
             World world = new BukkitWorld(location.getWorld());
+            Arrays.stream(location.getWorld().getLoadedChunks())
+                    // getBiome method takes 2 arguments, X coordinate and Z coordinate, in 1.16 (iirc), it takes 3 arguments since biomes became 3 dimensional.
+                    .filter(chunk -> !chunk.getChunkSnapshot(false,true,false).getBiome(0,319,0).equals(Biome.PLAINS))
+                    .forEach(chunk -> {
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                for (int y = 0; y < 320; y++) {
+                                    chunk.getBlock(x, y, z).setBiome(Biome.PLAINS);
+                                }
+                            }
+                        }
+                    });
 
             try {
                 format.load(file).paste(world, pos, false, true, null);
+
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

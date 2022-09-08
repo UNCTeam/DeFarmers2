@@ -43,6 +43,7 @@ public class GameCommands extends AbstractCommandExecutor {
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <deletePlayers>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <killAllMobsInGame>");
                 GameAnnouncer.sendMessage(sender,"/defarmers2 <forceEndMiniGame>");
+                GameAnnouncer.sendMessage(sender,"/defarmers2 <setSeed> seed");
             } else {
                 if (args[0].equalsIgnoreCase("start")) {
                     if (plugin.getGameManager().getGameStates().getState() == GameStates.GameState.WAITING_FOR_PLAYERS) {
@@ -76,9 +77,15 @@ public class GameCommands extends AbstractCommandExecutor {
                 } else if (args[0].equalsIgnoreCase("forceEndMiniGame")) {
                     this.plugin.getGameManager().forceEndMiniGame();
                 } else if (args[0].equalsIgnoreCase("setSeed")) {
-                    if (args.length >= 2 && Long.getLong(args[1]) != null)
-                        this.plugin.getGameManager().setSeed(Long.getLong(args[1]));
-                    else
+                    if (args.length >= 2) {
+                        try {
+                        this.plugin.getGameManager().setSeed(Long.parseLong(args[1]));
+
+                        GameAnnouncer.sendMessage(sender, "Seed set to " + args[1]);
+                        } catch (Exception e) {
+                            GameAnnouncer.sendMessage(sender, "Invalid seed!");
+                        }
+                    } else
                         GameAnnouncer.sendMessage(sender, "need a valid seed !");
                 } else {
                     GameAnnouncer.sendMessage(sender,"Invalid command.");

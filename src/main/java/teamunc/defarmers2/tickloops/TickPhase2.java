@@ -18,7 +18,7 @@ public class TickPhase2 extends AbstractTickLoop {
     @Override
     public void actionsOnEnd() {
         // re setuping players
-        this.plugin.getGameManager().setupPlayers(true, true, true);
+        this.plugin.getGameManager().setupPlayers(true, true, true, false);
 
         // give Artefact buyed to each teams
         this.plugin.getGameManager().getTeamManager().giveArtefactToTeams();

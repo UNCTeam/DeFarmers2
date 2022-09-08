@@ -29,7 +29,7 @@ public class TickPhase1 extends AbstractTickLoop {
         Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_SPAWNING, false);
 
         // re setuping players
-        this.plugin.getGameManager().setupPlayers(true,false, true);
+        this.plugin.getGameManager().setupPlayers(true,false, true, false);
 
         // giving players shop item
         this.plugin.getGameManager().getTeamManager().giveShopItem();

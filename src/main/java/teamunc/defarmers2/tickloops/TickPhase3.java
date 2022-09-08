@@ -59,7 +59,7 @@ public class TickPhase3 extends AbstractTickLoop {
         GameAnnouncer.announceClassement(teamClassement);
 
         // re setuping players
-        this.plugin.getGameManager().setupPlayers(true, false, false);
+        this.plugin.getGameManager().setupPlayers(true, false, false, false);
 
         // clearing mobs and setting peaceful difficulty
         this.plugin.getGameManager().getCustomMobsManager().clearMobs();
