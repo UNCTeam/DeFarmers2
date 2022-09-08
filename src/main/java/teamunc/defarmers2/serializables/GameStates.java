@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class GameStates implements Serializable {
+
 	public enum GameState {
 		WAITING_FOR_PLAYERS,
 		PHASE1,
@@ -37,6 +38,7 @@ public class GameStates implements Serializable {
 
 	}
 	private GameState state;
+	private long seed = -1;
 	private InGameItemsList itemsList;
 	private HashMap<UUID,UUID> mobsTargeting;
 	private ArrayList<UUID> mobsUntouchable;
@@ -47,6 +49,14 @@ public class GameStates implements Serializable {
 		timeLeftInThisPhase = -1;
 		mobsTargeting = new HashMap<>();
 		mobsUntouchable = new ArrayList<>();
+	}
+
+	public long getActualSeed() {
+		return this.seed;
+	}
+
+	public void setActualSeed(long newSeed) {
+		this.seed = newSeed;
 	}
 
 	public GameState getState() {
@@ -63,6 +73,7 @@ public class GameStates implements Serializable {
 		timeLeftInThisPhase = -1;
 		mobsTargeting = new HashMap<>();
 		mobsUntouchable = new ArrayList<>();
+		seed = -1;
 	}
 
 	public int getTimeLeftInThisPhase() {

@@ -50,7 +50,7 @@ public class GameOptions {
         }
 
         for (DeFarmersEntityType type : CustomMobsManager.getAllCustomMobsTypes()) {
-            config.addDefault("custom-mob." + type.toString() + ".price", 10);
+            config.addDefault("custom-mob." + type.toString() + ".price", type.getDefaultPrice());
             config.addDefault("custom-mob." + type.toString() + ".enabled", true);
         }
 

@@ -9,28 +9,30 @@ import teamunc.defarmers2.Defarmers2;
 
 public enum DeFarmersEntityType {
 
-    ZOMBIE("Zombie", 1),
-    SKELETON("Skeleton", 2),
-    SPIDER("Spider", 3),
-    CAVE_SPIDER("CaveSpider", 4),
-    CREEPER("Creeper", 5),
-    ENDERMAN("Enderman", 6),
-    FOX("Fox", 17),
-    ZOMBIFIED_PIGLIN("ZombifiedPiglin", 8),
-    CAT("Cat", 16),
-    RAVAGER("Ravager", 19),
-    WOLF("Wolf", 11),
-    ENDERMITE("Endermite", 14),
-    WITCH("Witch", 10),
-    POLAR_BEAR("PolarBear", 20),
+    ZOMBIE("Zombie", 1,20),
+    SKELETON("Skeleton", 2,25),
+    SPIDER("Spider", 3, 20),
+    CAVE_SPIDER("CaveSpider", 4, 25),
+    CREEPER("Creeper", 5, 30),
+    ENDERMAN("Enderman", 6, 120),
+    FOX("Fox", 17, 15),
+    ZOMBIFIED_PIGLIN("ZombifiedPiglin", 8, 30),
+    CAT("Cat", 16, 10),
+    RAVAGER("Ravager", 19, 200),
+    WOLF("Wolf", 11, 50),
+    ENDERMITE("Endermite", 14, 15),
+    WITCH("Witch", 10, 60),
+    POLAR_BEAR("PolarBear", 20, 100),
     ;
 
 
     private String name;
+    private final int defaultPrice;
     private int customModelData;
-    DeFarmersEntityType(String name, int customModelData) {
+    DeFarmersEntityType(String name, int customModelData, int defaultPrice) {
         this.name = name;
         this.customModelData = customModelData;
+        this.defaultPrice = defaultPrice;
     }
 
     @Override
@@ -58,5 +60,9 @@ public enum DeFarmersEntityType {
         item.setItemMeta(meta);
 
         return item;
+    }
+
+    public int getDefaultPrice() {
+        return this.defaultPrice;
     }
 }

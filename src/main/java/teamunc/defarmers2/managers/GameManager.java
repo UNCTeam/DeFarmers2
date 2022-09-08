@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.serializables.GameOptions;
 import teamunc.defarmers2.serializables.GameStates;
+import teamunc.defarmers2.serializables.SavedGame;
 import teamunc.defarmers2.utils.minigame.MiniGame;
 import teamunc.defarmers2.utils.scoreboards.InGameInfoScoreboard;
 import teamunc.defarmers2.utils.worldEdit.ApiWorldEdit;
@@ -178,7 +179,13 @@ public class GameManager extends Manager {
     public void stopGame() {
         try {
             // saving stats
-            this.getFileManager().saveJson("TeamStates_Save_" + UUID.randomUUID(), this.getTeamManager().getTeamStates());
+            this.getFileManager().saveJson(
+                    "SavedGame_" + UUID.randomUUID(),
+                    new SavedGame(
+                            this.gameStates,
+                            this.getTeamManager().getTeamStates()
+                    )
+            );
 
             // reseting gameStates
             gameStates.reset();
@@ -377,5 +384,15 @@ public class GameManager extends Manager {
             player.getInventory().clear();
         }
         this.miniGame = null;
+    }
+
+    public long getSeedOrGenerate() {
+        if (this.gameStates.getActualSeed() == -1)
+            this.gameStates.setActualSeed(new Random().nextLong());
+        return this.gameStates.getActualSeed();
+    }
+
+    public void setSeed(Long aLong) {
+        this.gameStates.setActualSeed(aLong);
     }
 }

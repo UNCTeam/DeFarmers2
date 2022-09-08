@@ -19,4 +19,12 @@ public class DoubleValue implements Serializable {
         this.min = min;
         this.max = max;
     }
+
+    @Override
+    public String toString() {
+        return "DoubleValue{" +
+                "min=" + min +
+                ", max=" + max +
+                '}';
+    }
 }

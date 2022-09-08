@@ -75,6 +75,11 @@ public class GameCommands extends AbstractCommandExecutor {
                     this.plugin.getGameManager().getCustomMobsManager().clearMobs();
                 } else if (args[0].equalsIgnoreCase("forceEndMiniGame")) {
                     this.plugin.getGameManager().forceEndMiniGame();
+                } else if (args[0].equalsIgnoreCase("setSeed")) {
+                    if (args.length >= 2 && Long.getLong(args[1]) != null)
+                        this.plugin.getGameManager().setSeed(Long.getLong(args[1]));
+                    else
+                        GameAnnouncer.sendMessage(sender, "need a valid seed !");
                 } else {
                     GameAnnouncer.sendMessage(sender,"Invalid command.");
                 }
