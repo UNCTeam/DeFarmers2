@@ -14,7 +14,7 @@ import java.util.List;
 public class MeteoriteItem extends CustomItem {
 
     public MeteoriteItem() {
-        super("Meteorite", 2, "METEORITE",1);
+        super("Meteorite", 2, "METEORITE");
     }
 
     @Override
@@ -35,5 +35,10 @@ public class MeteoriteItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 100;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

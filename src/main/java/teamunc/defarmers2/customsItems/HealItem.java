@@ -14,7 +14,7 @@ import java.util.UUID;
 public class HealItem extends CustomItem {
 
     public HealItem() {
-        super("Heal", 13, "HEAL",1);
+        super("Heal", 13, "HEAL");
     }
 
     @Override
@@ -37,5 +37,10 @@ public class HealItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 150;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

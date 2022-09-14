@@ -2,6 +2,7 @@ package teamunc.defarmers2.tickloops;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
+import org.bukkit.World;
 import org.bukkit.scoreboard.Team;
 import teamunc.defarmers2.managers.CustomMobsManager;
 import teamunc.defarmers2.managers.GameAnnouncer;
@@ -64,7 +65,7 @@ public class TickPhase3 extends AbstractTickLoop {
         // clearing mobs and setting peaceful difficulty
         this.plugin.getGameManager().getCustomMobsManager().clearMobs();
 
-        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.PEACEFUL);
+        Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.PEACEFUL));
 
 
     }

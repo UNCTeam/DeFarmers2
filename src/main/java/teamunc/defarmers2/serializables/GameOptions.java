@@ -43,10 +43,12 @@ public class GameOptions {
 
         config.addDefault("starting-money", 0);
         config.addDefault("mobCountAtSpawn", 10);
+        config.addDefault("numberOfGoalItem", 7);
 
         for (String type : CustomItemsManager.getAllCustomItemTypes()) {
             config.addDefault("custom-item." + type + ".price", CustomItemsManager.getCustomItem(type).getDefaultPrice());
             config.addDefault("custom-item." + type + ".enabled", true);
+            config.addDefault("custom-item." + type + ".durability", CustomItemsManager.getCustomItem(type).getDefaultDurability());
         }
 
         for (DeFarmersEntityType type : CustomMobsManager.getAllCustomMobsTypes()) {
@@ -105,6 +107,10 @@ public class GameOptions {
         return config.getInt("custom-item." + type + ".price");
     }
 
+    public int getCustomItemMaxDurability(String type) {
+        return config.getInt("custom-item." + type + ".durability");
+    }
+
     public boolean isCustomMobEnabled(DeFarmersEntityType type) {
         return config.getBoolean("custom-mob." + type.toString() + ".enabled");
     }
@@ -115,5 +121,9 @@ public class GameOptions {
 
     public int getMobCountAtSpawn() {
         return config.getInt("mobCountAtSpawn");
+    }
+
+    public int getNumberOfGoalItem() {
+        return config.getInt("numberOfGoalItem");
     }
 }

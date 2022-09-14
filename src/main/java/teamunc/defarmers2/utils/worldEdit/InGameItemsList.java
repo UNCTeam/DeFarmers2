@@ -23,7 +23,7 @@ public class InGameItemsList implements Serializable {
         ArrayList<String> keys = new ArrayList<>(itemsListWithPriceEnd.keySet());
         Collections.shuffle(keys,new Random(getSeed()));
         for (String key : keys) {
-            if (i < 5) {
+            if (i < Defarmers2.getInstance().getGameManager().getGameOptions().getNumberOfGoalItem()) {
                 res.put(key, itemsListWithPriceEnd.get(key));
                 i++;
             }

@@ -19,7 +19,7 @@ import java.util.List;
 public class FrozenItem extends CustomItem {
 
     public FrozenItem() {
-        super("Frozen", 7, "FROZEN",1);
+        super("Frozen", 7, "FROZEN");
     }
 
     @Override
@@ -46,5 +46,10 @@ public class FrozenItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 65;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

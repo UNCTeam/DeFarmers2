@@ -46,7 +46,7 @@ public abstract class AbstractTickLoop {
         GameStates.GameState nextPhase = gameStates.getState().next();
 
         // announce
-        GameAnnouncer.announceNextPhase(nextPhase.toString());
+        GameAnnouncer.announceNextPhase(nextPhase);
 
         // teleport
         this.gameManager.teleportPlayers(nextPhase);

@@ -62,6 +62,7 @@ public final class Defarmers2 extends JavaPlugin {
     public void registerCommands() {
         getCommand("defarmers2").setExecutor(new GameCommands(this));
         getCommand("minigame").setExecutor(new GameCommands(this));
+        getCommand("itemsinfo").setExecutor(new GameCommands(this));
         getCommand("team").setExecutor(new TeamCommands(this));
 
     }

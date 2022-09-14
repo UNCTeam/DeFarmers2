@@ -1,9 +1,6 @@
 package teamunc.defarmers2.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Mob;
@@ -87,6 +84,9 @@ public class GameCommands extends AbstractCommandExecutor {
                         }
                     } else
                         GameAnnouncer.sendMessage(sender, "need a valid seed !");
+                } else if (args[0].equalsIgnoreCase("seed")) {
+                    GameAnnouncer.sendMessage(sender, "Seed is " + this.plugin.getGameManager().getSeed());
+
                 } else {
                     GameAnnouncer.sendMessage(sender,"Invalid command.");
                 }
@@ -98,6 +98,12 @@ public class GameCommands extends AbstractCommandExecutor {
                 GameAnnouncer.sendMessage(sender, "Joined minigame!");
             } else {
                 GameAnnouncer.sendMessage(sender, "Failed to join minigame!");
+            }
+        } else if (cmd.getName().equalsIgnoreCase("itemsinfo")) {
+            GameManager gameManager = plugin.getGameManager();
+            GameAnnouncer.sendMessage(sender, ChatColor.GOLD + "--- Items list: ---");
+            for (String item : gameManager.getGameStates().getItemsList().getItemsListWithPrice().keySet()) {
+                GameAnnouncer.sendMessage(sender, "§a" + item + ": " + ChatColor.GOLD + gameManager.getGameStates().getItemsList().getItemsListWithPrice().get(item));
             }
         }
         return true;

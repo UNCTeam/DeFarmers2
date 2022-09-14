@@ -20,7 +20,7 @@ import java.util.List;
 public class SuperMobItem extends CustomItem {
 
     public SuperMobItem() {
-        super("SuperMob", 12, "SUPERMOB",1);
+        super("SuperMob", 12, "SUPERMOB");
     }
 
     @Override
@@ -41,5 +41,10 @@ public class SuperMobItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 120;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

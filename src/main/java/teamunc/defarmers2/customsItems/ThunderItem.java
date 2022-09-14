@@ -12,7 +12,7 @@ import java.util.List;
 public class ThunderItem extends CustomItem {
 
     public ThunderItem() {
-        super("Thunder", 6, "THUNDER",1);
+        super("Thunder", 6, "THUNDER");
     }
 
     @Override
@@ -33,5 +33,10 @@ public class ThunderItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 85;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

@@ -280,9 +280,6 @@ public class TeamManager extends Manager{
                 this.teamsStates.addTeam(team.getName(), money, 0, false, new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>());
             }
         }
-
-        // setup spawn
-        setupTeamSpawn();
     }
 
     public void calculateMoneyOfTeams() {
@@ -291,19 +288,24 @@ public class TeamManager extends Manager{
 
         // calculate money of teams
         for (Team team : this.getTeamStates().getAllTeams()) {
+
             if (team != null) {
 
                 // for each player inventories in the team
                 for (String playerName : team.getEntries()) {
+
                     Player player = Bukkit.getPlayer(playerName);
                     if (player != null) {
 
                         // for each item in the inventory
                         for (ItemStack item : player.getInventory().getContents()) {
-                            if (item != null && items.containsKey(item.getType().name())) {
-                                int price = items.get(item.getType().name().toUpperCase());
+                            if (item != null) {
 
-                                this.getTeamStates().addTeamMoney(team.getName(),price  * item.getAmount());
+                                if (items.containsKey(item.getType().name())) {
+                                    int price = items.get(item.getType().name().toUpperCase());
+
+                                    this.getTeamStates().addTeamMoney(team.getName(), price * item.getAmount());
+                                }
                             }
                         }
                     }
@@ -342,7 +344,7 @@ public class TeamManager extends Manager{
                 for (CustomItem artefact : artefacts) {
                     int random = new Random().nextInt(team.getEntries().size());
                     Player player = getPlayersInTeamOnline(team.getName()).get(random);
-                    player.getInventory().setItem(player.getInventory().firstEmpty(), artefact);
+                    player.getInventory().addItem(artefact);
                 }
             }
         }
@@ -414,11 +416,6 @@ public class TeamManager extends Manager{
         else if (itemUI.typeOfCustom() == ItemTypeEnum.CUSTOM_MOB)
             this.addAMobInTeam(team.getName(), itemUI);
         else return false;
-
-        ItemMeta meta = itemUI.getItemMeta();
-        int nbActuelle = itemUI.getNbItem(team);
-        meta.setLore(Arrays.asList("", "§r§l§cClick to buy this item","Price : " + price,"§r§l§cYou have : §r§f§a" + nbActuelle));
-        itemUI.setItemMeta(meta);
 
         return true;
     }

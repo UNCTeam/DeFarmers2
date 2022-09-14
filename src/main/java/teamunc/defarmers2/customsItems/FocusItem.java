@@ -14,7 +14,7 @@ import java.util.List;
 public class FocusItem extends CustomItem {
 
     public FocusItem() {
-        super("Focus", 15, "FOCUS",1);
+        super("Focus", 15, "FOCUS");
     }
 
     @Override
@@ -38,5 +38,10 @@ public class FocusItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 50;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 3;
     }
 }

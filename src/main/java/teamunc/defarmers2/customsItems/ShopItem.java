@@ -9,7 +9,7 @@ import java.util.List;
 public class ShopItem extends CustomItem {
 
     public ShopItem() {
-        super("Shop", 1, "SHOP",99999);
+        super("Shop", 1, "SHOP");
     }
 
     @Override
@@ -28,5 +28,10 @@ public class ShopItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 0;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 99999;
     }
 }

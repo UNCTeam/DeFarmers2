@@ -66,11 +66,16 @@ public class GameManager extends Manager {
             this.getFileManager().saveJson("gameStates",this.gameStates);
         }
 
-        if (this.getFileManager().fileExists("default_itemList")) {
-            this.gameStates.setItemsList(this.getFileManager().loadJson("default_itemList", InGameItemsList.class));
-        } else {
-            this.gameStates.setItemsList(new InGameItemsList(new HashMap<>(Map.of("STONE", new DoubleValue(1, 5)))));
-            this.getFileManager().saveJson("default_itemList",this.gameStates.getItemsList());
+        if (!this.getFileManager().fileExists("default_itemList")) {
+            InGameItemsList default_list = new InGameItemsList(
+                    new HashMap<>(
+                            Map.of(
+                                    "STONE",
+                                    new DoubleValue(1, 5)
+                            )
+                    )
+            );
+            this.getFileManager().saveJson("default_itemList",default_list);
         }
 
         // reload tick loop if game is running
@@ -122,15 +127,29 @@ public class GameManager extends Manager {
 
         this.removeOfflinePlayers();
 
+        // removing all sheeps
+        for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
+            if (entity instanceof Sheep) {
+                entity.remove();
+            }
+        }
+
         //check if teams are empty
         this.getTeamManager().removeEmptyTeams();
 
-        // setting difficulty
-        Bukkit.getWorlds().get(0).setDifficulty(Difficulty.HARD);
+        // setup spawn
+        this.getTeamManager().setupTeamSpawn();
+
+        // setting gamerules
+        Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.PEACEFUL));
         Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_LOOT, true);
         Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_TILE_DROPS, true);
         Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_ENTITY_DROPS, true);
         Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_SPAWNING, true);
+        Bukkit.getWorlds().get(0).setTime(1000);
+        scheduler.runTaskLater(this.plugin, () -> {
+            Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.HARD));
+            }, 20L);
 
         // setting up phase 1 area
         ApiWorldEdit.managePhase1Area(this.getTeamManager().getTeamSpawns(GameStates.GameState.PHASE1), true);
@@ -144,9 +163,12 @@ public class GameManager extends Manager {
         setupPlayers(false, false, false, true);
 
         // apply resistance to all player
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 10));
-        }
+        scheduler.runTaskLater(this.plugin, () -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 5, 40));
+            }
+        }, 20L);
+
 
         // teleport players to phase 1
         teleportPlayers(GameStates.GameState.PHASE1);
@@ -171,6 +193,9 @@ public class GameManager extends Manager {
         for (String item : this.gameStates.getItemsList().getItemsListWithPrice().keySet()) {
             GameAnnouncer.sendMessageToAllOnlinePlayer(Bukkit.getOnlinePlayers(),"§a" + item + ": "+ ChatColor.GOLD + this.gameStates.getItemsList().getItemsListWithPrice().get(item));
         }
+
+        // announce
+        GameAnnouncer.announceNextPhase(GameStates.GameState.PHASE1);
 
         // start tick loop
         this.eachSecondsTimerID = scheduler.scheduleSyncRepeatingTask(this.plugin, () -> getTickActionsManager().onTick(),  0L, 20L);
@@ -199,6 +224,14 @@ public class GameManager extends Manager {
 
             // reseting gameStates
             gameStates.reset();
+
+            // setting difficulty
+            Bukkit.getWorlds().forEach(world -> world.setDifficulty(Difficulty.PEACEFUL));
+            Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_LOOT, false);
+            Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_TILE_DROPS, false);
+            Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_ENTITY_DROPS, false);
+            Bukkit.getWorlds().get(0).setGameRule(GameRule.DO_MOB_SPAWNING, false);
+
 
             // reseting inGamePlatform
             // phase 1 area
@@ -407,5 +440,9 @@ public class GameManager extends Manager {
 
     public void setSeed(Long aLong) {
         this.gameStates.setActualSeed(aLong);
+    }
+
+    public String getSeed() {
+        return String.valueOf(this.gameStates.getActualSeed());
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 public class BeeeItem extends CustomItem {
 
     public BeeeItem() {
-        super("Beee", 9, "BEEE",1);
+        super("Beee", 9, "BEEE");
     }
 
     @Override
@@ -35,6 +35,11 @@ public class BeeeItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 65;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 
 }

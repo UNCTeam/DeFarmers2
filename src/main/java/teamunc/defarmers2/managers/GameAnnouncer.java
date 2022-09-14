@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import teamunc.defarmers2.Defarmers2;
+import teamunc.defarmers2.serializables.GameStates;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +67,20 @@ public class GameAnnouncer {
         });
     }
 
-    public static void announceNextPhase(String toString) {
-        sendTitle(toString);
+    public static void announceNextPhase(GameStates.GameState nextPhase) {
+        switch (nextPhase) {
+            case PHASE1:
+                sendTitle("せ", "", 40, 60, 40);
+                break;
+            case PHASE2:
+                sendTitle("き","", 40, 60, 40);
+                break;
+            case PHASE3:
+                sendTitle("く","", 40, 60, 40);
+                break;
+            case END_GAME:
+                sendTitle("け","", 40, 60, 40);
+                break;
+        }
     }
 }

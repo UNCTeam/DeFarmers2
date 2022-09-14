@@ -83,11 +83,21 @@ public class ShopInventory implements Listener {
 
         // create a new custom ui item from the clicked item just to buy it and update lore
         final Team team = TeamManager.getInstance().getTeamOfPlayer(p.getName());
-        CustomUIItem item = new CustomUIItem(clickedItem,team);
 
-        Defarmers2.getInstance().getGameManager().getTeamManager().buy(team,item);
+        if (new CustomUIItem(clickedItem,team).typeOfCustom() == ItemTypeEnum.CUSTOM_ITEM) {
+            String type = CustomItemsManager.getInstance().getCustomType(clickedItem.getItemMeta().getPersistentDataContainer());
+            CustomItem customItem = CustomItemsManager.getCustomItem(type);
+            Defarmers2.getInstance().getGameManager().getTeamManager().buy(team,new CustomUIItem(clickedItem,team));
+            e.setCurrentItem(new CustomUIItem(customItem,team));
+        } else {
+            CustomUIItem item = new CustomUIItem(clickedItem,team);
+            Defarmers2.getInstance().getGameManager().getTeamManager().buy(team,item);
+            e.setCurrentItem(item);
+        }
 
-        e.setCurrentItem(item);
+
+
+
     }
 
     // Cancel dragging in our inventory

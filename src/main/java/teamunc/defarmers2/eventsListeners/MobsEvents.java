@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.bukkit.event.EventPriority.HIGHEST;
+import static teamunc.defarmers2.serializables.GameStates.GameState.PHASE3;
 
 public class MobsEvents extends AbstractListener {
 
@@ -79,17 +80,8 @@ public class MobsEvents extends AbstractListener {
     }
 
     @EventHandler
-    public void onMobSpawn(EntitySpawnEvent event) {
-        if (this.plugin.getGameManager().getGameStates().getState().isInGamePhase() && event.getEntity() instanceof Mob) {
-            if (event.getEntity().getType() == EntityType.VEX) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     public void onEnderTeleport(EntityTeleportEvent event) {
-        if (!this.plugin.getGameManager().getGameStates().getState().isInGamePhase()) {
+        if (this.plugin.getGameManager().getGameStates().getState() != PHASE3) {
             return;
         }
 

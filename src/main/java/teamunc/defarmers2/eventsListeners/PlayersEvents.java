@@ -1,5 +1,6 @@
 package teamunc.defarmers2.eventsListeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import teamunc.defarmers2.Defarmers2;
 import teamunc.defarmers2.managers.GameManager;
@@ -66,11 +69,19 @@ public class PlayersEvents extends AbstractListener {
 
             Location respawnLocation = teamManager.getTeamSpawnLocation(team.getName(),gameManager.getGameStates().getState());
 
-            event.setRespawnLocation(respawnLocation.subtract(0, 1, 0));
+            event.setRespawnLocation(respawnLocation.clone().subtract(0, 1, 0));
 
         } else {
             event.setRespawnLocation(player.getWorld().getSpawnLocation());
         }
+
+        // apply resistance
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            if (gameManager.getGameStates().getState() == GameStates.GameState.PHASE1) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 3, 20));
+            }
+        }, 10);
+
     }
 
 

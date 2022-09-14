@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DinnerboneItem extends CustomItem {
 
     public DinnerboneItem() {
-        super("Dinnerbone", 8, "DINNERBONE",1);
+        super("Dinnerbone", 8, "DINNERBONE");
     }
 
     @Override
@@ -39,6 +39,11 @@ public class DinnerboneItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 5;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 
 }

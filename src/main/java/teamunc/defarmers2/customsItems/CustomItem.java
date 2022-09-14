@@ -7,6 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import teamunc.defarmers2.Defarmers2;
+import teamunc.defarmers2.serializables.GameOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +18,9 @@ public abstract class CustomItem extends ItemStack {
     protected NamespacedKey customDurabilityKey;
     protected NamespacedKey customItemKey;
 
-    public CustomItem(String name, int customModelData, String type, int durability) {
+    public CustomItem(String name, int customModelData, String type) {
         super(new ItemStack(Material.CARROT_ON_A_STICK, 1));
+        int durability = GameOptions.getInstance().getCustomItemMaxDurability(type);
         ItemMeta meta = this.getItemMeta();
         meta.setCustomModelData(customModelData);
         meta.setDisplayName("§r§l§c" + name);
@@ -51,4 +53,6 @@ public abstract class CustomItem extends ItemStack {
     public abstract List<String> getDescription();
 
     public abstract int getDefaultPrice();
+
+    public abstract int getDefaultDurability();
 }

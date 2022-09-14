@@ -78,7 +78,11 @@ public class CustomItemsManager extends Manager {
         // durability
         this.setCustomDurability(this.getCustomDurability(item) - customItemParams.getDurabilityUsed(), item);
         if (this.getCustomDurability(item) <= 0) {
-            item.setAmount(0);
+            item.setAmount(item.getAmount() - 1);
+            if (item.getAmount() > 0) {
+                this.setCustomDurability(this.plugin.getGameManager().getGameOptions().getCustomItemMaxDurability(type), item);
+                actualiseLore(item);
+            }
         } else {
             // actualise lore
             actualiseLore(item);

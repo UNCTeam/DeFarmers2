@@ -11,30 +11,36 @@ depend: [ FastAsyncWorldEdit]
 commands:
     defarmers2:
         aliases: [ df2 ]
-        usage: /defarmers2
+        usage: /defarmers2 or /df2
         description: Defarmers2
         permission: defarmers2.admin
 
     team:
         aliases: [ t ]
-        usage: /team
+        usage: /team or /t
         description: Defarmers2 team
         permission: defarmers2.admin
 
     minigame:
         aliases: [ mg ]
-        usage: /minigame
+        usage: /minigame or /mg
         description: Defarmers2 minigame
+        permission: defarmers2.user
+
+    itemsinfo:
+        aliases: [ ii ]
+        usage: /itemsinfo or /ii
+        description: Defarmers2 itemsinfo
         permission: defarmers2.user
 
 
 
 permissions:
-    user:
+    defarmers2.user:
         name: defarmers2.user
         description: Allows the user to use the Defarmers2 command
         default: true
-    admin:
+    defarmers2.admin:
         name: defarmers2.admin
         description: Allows the admin to use the Defarmers2 command
-        default: false
+        default: op

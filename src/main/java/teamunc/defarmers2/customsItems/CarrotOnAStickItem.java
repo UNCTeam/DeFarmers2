@@ -22,7 +22,7 @@ import java.util.UUID;
 public class CarrotOnAStickItem extends CustomItem {
 
     public CarrotOnAStickItem() {
-        super("Carrot on a Stick", 3, "CARROTONASTICK",5);
+        super("Carrot on a Stick", 3, "CARROTONASTICK");
     }
 
     @Override
@@ -43,5 +43,10 @@ public class CarrotOnAStickItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 50;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 4;
     }
 }

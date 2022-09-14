@@ -25,7 +25,7 @@ import java.util.UUID;
 public class BeeeEvilItem extends CustomItem {
 
     public BeeeEvilItem() {
-        super("Beee but the evil one", 10, "BEEEEVIL",1);
+        super("Beee but the evil one", 10, "BEEEEVIL");
     }
 
     @Override
@@ -57,5 +57,10 @@ public class BeeeEvilItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 180;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

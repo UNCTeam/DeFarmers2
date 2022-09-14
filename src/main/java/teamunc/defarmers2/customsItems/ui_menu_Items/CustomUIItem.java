@@ -8,12 +8,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import teamunc.defarmers2.Defarmers2;
+import teamunc.defarmers2.managers.CustomItemsManager;
 import teamunc.defarmers2.managers.TeamManager;
 import teamunc.defarmers2.mobs.DeFarmersEntityType;
 import teamunc.defarmers2.serializables.GameOptions;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class CustomUIItem extends ItemStack {
@@ -21,11 +23,21 @@ public class CustomUIItem extends ItemStack {
     public CustomUIItem(ItemStack item, Team team) {
         super(item);
 
+        setLore(item, team);
+    }
+
+    public void setLore(ItemStack item, Team team) {
         // setting lore
         ItemMeta meta = item.getItemMeta();
         int nbActuelle = getNbItem(team);
-        meta.setLore(Arrays.asList("", "§r§l§cClick to buy this item","Price : " + getPrice(),"§r§l§cYou have : §r§f§a" + nbActuelle));
-        item.setItemMeta(meta);
+        List<String> lores = meta.getLore();
+        List<String> newLores = Arrays.asList("", "§r§l§cClick to buy this item","Price : " + getPrice(),"§r§l§cYou have : §r§f§a" + nbActuelle);
+        if (lores != null) {
+            lores.addAll(newLores);
+            meta.setLore(lores);
+        } else {
+            meta.setLore(newLores);
+        }
         this.setItemMeta(meta);
     }
 

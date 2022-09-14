@@ -15,7 +15,7 @@ import java.util.UUID;
 public class UltimateSaverItem extends CustomItem {
 
     public UltimateSaverItem() {
-        super("Ultimate Saver", 17, "ULTIMATESAVER",1);
+        super("Ultimate Saver", 17, "ULTIMATESAVER");
     }
 
     @Override
@@ -39,5 +39,10 @@ public class UltimateSaverItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
 return 100;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

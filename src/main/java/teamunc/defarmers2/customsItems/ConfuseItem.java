@@ -19,7 +19,7 @@ import java.util.UUID;
 public class ConfuseItem extends CustomItem {
 
     public ConfuseItem() {
-        super("Confuse", 14, "CONFUSE",1);
+        super("Confuse", 14, "CONFUSE");
     }
 
     @Override
@@ -52,5 +52,10 @@ public class ConfuseItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 175;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

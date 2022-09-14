@@ -1,9 +1,17 @@
 package teamunc.defarmers2.utils.worldEdit;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
+import com.sk89q.worldedit.EditSessionFactory;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -16,21 +24,18 @@ import teamunc.defarmers2.managers.FileManager;
 import teamunc.defarmers2.managers.GameManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 
 public class ApiWorldEdit {
-    // place block at each location in the array
-    public static void placeBlocks(Location[] locations, Material block) {
-        for (Location location : locations) {
-            location.getBlock().setType(block);
-        }
-    }
 
     // place a platform at each location in the array of a given radius
     public static void placePlatform(Location[] locations, int radius) {
@@ -99,27 +104,27 @@ public class ApiWorldEdit {
         for (Location location : locations) {
 
             ClipboardFormat format = ClipboardFormats.findByFile(file);
-            BlockVector3 pos = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            World world = new BukkitWorld(location.getWorld());
-            Arrays.stream(location.getWorld().getLoadedChunks())
-                    // getBiome method takes 2 arguments, X coordinate and Z coordinate, in 1.16 (iirc), it takes 3 arguments since biomes became 3 dimensional.
-                    .filter(chunk -> !chunk.getChunkSnapshot(false,true,false).getBiome(0,319,0).equals(Biome.PLAINS))
-                    .forEach(chunk -> {
-                        for (int x = 0; x < 16; x++) {
-                            for (int z = 0; z < 16; z++) {
-                                for (int y = 0; y < 320; y++) {
-                                    chunk.getBlock(x, y, z).setBiome(Biome.PLAINS);
-                                }
-                            }
-                        }
-                    });
 
-            try {
-                format.load(file).paste(world, pos, false, true, null);
+            if (format != null) {
+
+                BlockVector3 pos = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                World world = new BukkitWorld(Objects.requireNonNull(location.getWorld()));
 
 
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                try (ClipboardReader reader = format.getReader(Files.newInputStream(file.toPath()))) {
+                    Clipboard clipboard = reader.read();
+                    try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
+                        Operation operation = new ClipboardHolder(clipboard)
+                                .createPaste(editSession)
+                                .to(pos)
+                                .ignoreAirBlocks(false)
+                                .build();
+                        Operations.complete(operation);
+                    }
+                    clipboard.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -155,9 +160,9 @@ public class ApiWorldEdit {
     }
 
     private static void resetAreaPhase3(Location location) {
-        for (int i = -62; i <= 62; i++) {
-            for (int j = -62; j <= 62; j++) {
-                for (int k = -14; k <= 50; k++) {
+        for (int i = -71; i <= 71; i++) {
+            for (int j = -71; j <= 71; j++) {
+                for (int k = -18; k <= 50; k++) {
                     Block blockCloned = location.clone().add(i, k, j).getBlock();
                     if (blockCloned.getType() != Material.AIR)
                         blockCloned.setType(Material.AIR);

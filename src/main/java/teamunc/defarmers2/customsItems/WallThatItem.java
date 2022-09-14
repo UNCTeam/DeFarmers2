@@ -16,7 +16,7 @@ import java.util.List;
 public class WallThatItem extends CustomItem {
 
     public WallThatItem() {
-        super("Wall That", 5, "WALLTHAT",1);
+        super("Wall That", 5, "WALLTHAT");
     }
 
     @Override
@@ -42,5 +42,10 @@ public class WallThatItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 20;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

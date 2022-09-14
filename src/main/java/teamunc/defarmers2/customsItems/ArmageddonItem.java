@@ -15,7 +15,7 @@ import java.util.Random;
 public class ArmageddonItem extends CustomItem {
 
     public ArmageddonItem() {
-        super("Armageddon", 11, "ARMAGEDDON",1);
+        super("Armageddon", 11, "ARMAGEDDON");
     }
 
     @Override
@@ -39,5 +39,10 @@ public class ArmageddonItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 165;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

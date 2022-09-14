@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ArmoredItem extends CustomItem {
 
     public ArmoredItem() {
-        super("Armored", 4, "ARMORED",1);
+        super("Armored", 4, "ARMORED");
     }
 
     @Override
@@ -57,5 +57,10 @@ public class ArmoredItem extends CustomItem {
     @Override
     public int getDefaultPrice() {
         return 125;
+    }
+
+    @Override
+    public int getDefaultDurability() {
+        return 1;
     }
 }

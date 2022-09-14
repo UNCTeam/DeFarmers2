@@ -14,6 +14,10 @@ public class TickPhase1 extends AbstractTickLoop {
     }
 
     public void actionsEachSecond() {
+        // turn to night at the middle of the phase
+        if (this.gameManager.getGameOptions().getTimeForPhase(GameStates.GameState.PHASE1) / 2 == gameStates.getTimeLeftInThisPhase()) {
+            Bukkit.getWorlds().get(0).setTime(13000);
+        }
     }
 
     @Override
